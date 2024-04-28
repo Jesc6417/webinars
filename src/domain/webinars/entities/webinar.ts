@@ -16,4 +16,12 @@ export class Webinar {
 
     return diff < 3;
   }
+
+  hasTooManySeats() {
+    return this.props.seats > 1000;
+  }
+
+  hasNoSeats() {
+    return this.props.seats < 1;
+  }
 }

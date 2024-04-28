@@ -9,7 +9,12 @@ export class OrganizeWebinar {
     private readonly dateGenerator: DateGenerator,
   ) {}
 
-  execute(data: { start: Date; end: Date; title: string; seats: number }) {
+  async execute(data: {
+    start: Date;
+    end: Date;
+    title: string;
+    seats: number;
+  }) {
     const id = this.idGenerator.generate();
     const webinar = new Webinar({
       id,
@@ -22,8 +27,14 @@ export class OrganizeWebinar {
     if (webinar.isTooSoon(this.dateGenerator.now()))
       throw new Error('Webinar must happen in at least 3 days.');
 
-    this.webinarRepository.create(webinar);
+    if (webinar.hasTooManySeats())
+      throw new Error('Webinar must have a maximum of 1000 seats.');
 
-    return { id };
+    if (webinar.hasNoSeats())
+      throw new Error('Webinar must have at least 1 seat.');
+
+    await this.webinarRepository.create(webinar);
+
+    return Promise.resolve({ id });
   }
 }

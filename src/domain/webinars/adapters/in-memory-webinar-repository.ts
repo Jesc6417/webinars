@@ -1,5 +1,5 @@
 import { Webinar } from '../entities/webinar';
-import { WebinarRepository } from '../ports/webinar-repository';
+import { WebinarRepository } from '../ports';
 
 export class InMemoryWebinarRepository implements WebinarRepository {
   private readonly database: Webinar[] = [];

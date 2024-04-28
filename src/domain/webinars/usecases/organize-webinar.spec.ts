@@ -1,5 +1,6 @@
+import { FixedDateGenerator } from './../../core/adapters/fixed-date.generator';
 import { FixedIdGenerator } from './../../core/adapters/fixed-id.generator';
-import { IdGenerator } from './../../core';
+import { DateGenerator, IdGenerator } from './../../core';
 import { WebinarRepository } from './../ports';
 import { InMemoryWebinarRepository } from './../adapters';
 import { OrganizeWebinar } from './organize-webinar';
@@ -7,6 +8,7 @@ import { OrganizeWebinar } from './organize-webinar';
 describe('Feature: Organizing a webinar', () => {
   let inMemoryWebinarRepository: WebinarRepository;
   let idGenerator: IdGenerator;
+  let dateGenerator: DateGenerator;
   let organizeWebinar: OrganizeWebinar;
 
   const payload = {
@@ -19,9 +21,12 @@ describe('Feature: Organizing a webinar', () => {
   beforeEach(() => {
     inMemoryWebinarRepository = new InMemoryWebinarRepository();
     idGenerator = new FixedIdGenerator();
+    dateGenerator = new FixedDateGenerator();
+
     organizeWebinar = new OrganizeWebinar(
       inMemoryWebinarRepository,
       idGenerator,
+      dateGenerator,
     );
   });
 
@@ -50,13 +55,13 @@ describe('Feature: Organizing a webinar', () => {
     it('should return an error', async () => {
       const webinarToday = {
         ...payload,
-        start: new Date(),
-        end: new Date(),
+        start: new Date('2024-04-28T10:00:00.000Z'),
+        end: new Date('2024-04-28T12:00:00.000Z'),
       };
 
-      expect(
-        async () => await organizeWebinar.execute(webinarToday),
-      ).rejects.toThrow('Webinar must happen in at least 3 days.');
+      expect(async () => organizeWebinar.execute(webinarToday)).rejects.toThrow(
+        'Webinar must happen in at least 3 days.',
+      );
     });
   });
 });

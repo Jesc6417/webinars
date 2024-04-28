@@ -1,5 +1,4 @@
-import { IdGenerator } from '@/domain/core';
-import { differenceInDays } from 'date-fns';
+import { DateGenerator, IdGenerator } from '@/domain/core';
 import { Webinar } from '../entities/webinar';
 import { WebinarRepository } from '../ports';
 
@@ -7,6 +6,7 @@ export class OrganizeWebinar {
   constructor(
     private readonly webinarRepository: WebinarRepository,
     private readonly idGenerator: IdGenerator,
+    private readonly dateGenerator: DateGenerator,
   ) {}
 
   execute(data: { start: Date; end: Date; title: string; seats: number }) {
@@ -19,7 +19,7 @@ export class OrganizeWebinar {
       end: data.end,
     });
 
-    if (webinar.isTooSoon(new Date()))
+    if (webinar.isTooSoon(this.dateGenerator.now()))
       throw new Error('Webinar must happen in at least 3 days.');
 
     this.webinarRepository.create(webinar);

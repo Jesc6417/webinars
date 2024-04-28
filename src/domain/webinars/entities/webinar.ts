@@ -6,6 +6,7 @@ type WebinarProps = {
   seats: number;
   start: Date;
   end: Date;
+  organizerId: string;
 };
 
 export class Webinar {

@@ -1,5 +1,5 @@
 import { DateGenerator, IdGenerator } from '@/domain/core';
-import { Webinar } from '../entities/webinar';
+import { User, Webinar } from './../entities';
 import { WebinarRepository } from '../ports';
 
 export class OrganizeWebinar {
@@ -14,6 +14,7 @@ export class OrganizeWebinar {
     end: Date;
     title: string;
     seats: number;
+    user: User;
   }) {
     const id = this.idGenerator.generate();
     const webinar = new Webinar({
@@ -22,6 +23,7 @@ export class OrganizeWebinar {
       seats: data.seats,
       start: data.start,
       end: data.end,
+      organizerId: data.user.props.id,
     });
 
     if (webinar.isTooSoon(this.dateGenerator.now()))

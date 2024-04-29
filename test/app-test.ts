@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
+import { Fixture } from './fixtures/fixture';
 
 export class AppTest {
   private app: INestApplication;
@@ -24,5 +25,9 @@ export class AppTest {
 
   getHttpServer() {
     return this.app.getHttpServer();
+  }
+
+  async loadFixtures(fixtures: Fixture[]) {
+    return Promise.all(fixtures.map((fixture) => fixture.load(this)));
   }
 }

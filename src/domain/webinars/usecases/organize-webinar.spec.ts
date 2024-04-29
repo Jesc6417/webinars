@@ -78,9 +78,9 @@ describe('Feature: Organizing a webinar', () => {
     };
 
     it('should return an error', async () => {
-      expect(async () => organizeWebinar.execute(payload)).rejects.toThrow(
-        'Webinar must happen in at least 3 days.',
-      );
+      expect(
+        async () => await organizeWebinar.execute(payload),
+      ).rejects.toThrow('Webinar must happen in at least 3 days.');
     });
 
     it('should not create the webinar into the database', async () => {
@@ -95,9 +95,9 @@ describe('Feature: Organizing a webinar', () => {
     };
 
     it('should return an error', async () => {
-      expect(async () => organizeWebinar.execute(payload)).rejects.toThrow(
-        'Webinar must have a maximum of 1000 seats.',
-      );
+      expect(
+        async () => await organizeWebinar.execute(payload),
+      ).rejects.toThrow('Webinar must have a maximum of 1000 seats.');
     });
 
     it('should not create the webinar into the database', async () => {
@@ -112,9 +112,9 @@ describe('Feature: Organizing a webinar', () => {
     };
 
     it('should return an error', async () => {
-      expect(async () => organizeWebinar.execute(payload)).rejects.toThrow(
-        'Webinar must have at least 1 seat.',
-      );
+      expect(
+        async () => await organizeWebinar.execute(payload),
+      ).rejects.toThrow('Webinar must have at least 1 seat.');
     });
 
     it('should not create the webinar into the database', async () => {

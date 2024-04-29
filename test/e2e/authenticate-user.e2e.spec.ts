@@ -5,6 +5,11 @@ import { AppTest } from '../app-test';
 describe('Authenticate User', () => {
   let app: AppTest;
   let userRepository: InMemoryUserRepository;
+  const payload = {
+    email: 'john-doe@gmail.com',
+    password: 'azerty',
+  };
+  const token = 'am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==';
 
   beforeEach(async () => {
     app = new AppTest();
@@ -18,14 +23,11 @@ describe('Authenticate User', () => {
   });
 
   it('Scenario: Happy path', async () => {
-    userRepository.database.push('am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==');
+    userRepository.database.push(token);
 
     const result = await request(app.getHttpServer())
       .post('/users/authenticate')
-      .send({
-        email: 'john-doe@gmail.com',
-        password: 'azerty',
-      });
+      .send(payload);
 
     expect(result.status).toBe(200);
     expect(result.body).toEqual({ authenticated: true });

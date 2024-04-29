@@ -8,6 +8,10 @@ export class AuthenticateUser {
       'base64',
     );
 
-    return { authenticated: await this.authenticator.authenticate(token) };
+    const authenticated = await this.authenticator.authenticate(token);
+
+    if (!authenticated) throw new Error('User not found.');
+
+    return { authenticated };
   }
 }

@@ -1,9 +1,20 @@
 import { UserRepository } from '../ports';
+import { User } from './../entities/user';
 
 export class InMemoryUserRepository extends UserRepository {
-  readonly database: string[] = [];
+  readonly database: User[] = [];
 
-  async authenticate(token: string) {
-    return this.database.indexOf(token) !== -1;
+  async authenticate(data: { email: string; password: string }) {
+    const token = Buffer.from(`${data.email}:${data.password}`).toString(
+      'base64',
+    );
+
+    const result = this.database.find((user) => user.props.token === token);
+
+    return result?.props.token;
+  }
+
+  async validate(token: string) {
+    return this.database.find((user) => user.props.token === token);
   }
 }

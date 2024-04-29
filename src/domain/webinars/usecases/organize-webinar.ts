@@ -14,7 +14,7 @@ export class OrganizeWebinar {
     end: Date;
     title: string;
     seats: number;
-    user: User;
+    organizerId: string;
   }) {
     const id = this.idGenerator.generate();
     const webinar = new Webinar({
@@ -23,7 +23,7 @@ export class OrganizeWebinar {
       seats: data.seats,
       start: data.start,
       end: data.end,
-      organizerId: data.user.props.id,
+      organizerId: data.organizerId,
     });
 
     if (webinar.isTooSoon(this.dateGenerator.now()))

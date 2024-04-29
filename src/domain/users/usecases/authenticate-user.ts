@@ -1,17 +1,13 @@
 import { UserRepository } from './../ports';
 
 export class AuthenticateUser {
-  constructor(private readonly authenticator: UserRepository) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async execute(payload: { email: string; password: string }) {
-    const token = Buffer.from(`${payload.email}:${payload.password}`).toString(
-      'base64',
-    );
+    const token = await this.userRepository.authenticate(payload);
 
-    const authenticated = await this.authenticator.authenticate(token);
+    if (!token) throw new Error('User not found.');
 
-    if (!authenticated) throw new Error('User not found.');
-
-    return { authenticated };
+    return { access_token: token };
   }
 }

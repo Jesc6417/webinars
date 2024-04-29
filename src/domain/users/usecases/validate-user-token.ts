@@ -4,10 +4,10 @@ export class ValidateUserToken {
   constructor(private readonly userRepository: UserRepository) {}
 
   async execute(token: string) {
-    const isValid = await this.userRepository.authenticate(token);
+    const user = await this.userRepository.validate(token);
 
-    if (!isValid) throw new Error('Invalid token.');
+    if (!user) throw new Error('Invalid token.');
 
-    return this.userRepository.authenticate(token);
+    return user;
   }
 }

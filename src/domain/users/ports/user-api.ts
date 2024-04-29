@@ -8,6 +8,6 @@ export namespace UserApi {
     });
 
     export type Request = z.infer<typeof schema>;
-    export type Response = { authenticated: boolean };
+    export type Response = { access_token: string };
   }
 }

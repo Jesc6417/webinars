@@ -1,10 +1,16 @@
+import { User } from './../entities/user';
 import { InMemoryUserRepository } from './../adapters';
 import { ValidateUserToken } from './validate-user-token';
 
-describe('Usecase: Validate user token', () => {
+describe('Feature: Validate user token', () => {
   let userRepository: InMemoryUserRepository;
   let validateUserToken: ValidateUserToken;
   const token = 'am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==';
+  const johnDoe = new User({
+    email: 'john-doe@gmail.com',
+    token,
+    id: 'id-1',
+  });
 
   beforeEach(() => {
     userRepository = new InMemoryUserRepository();
@@ -13,11 +19,16 @@ describe('Usecase: Validate user token', () => {
 
   describe('Scenario: Happy path', () => {
     it('should return true if the token is valid', async () => {
-      userRepository.database.push(token);
+      userRepository.database.push(johnDoe);
 
       const result = await validateUserToken.execute(token);
 
-      expect(result).toBe(true);
+      expect(result).toBeDefined();
+      expect(result!.props).toEqual({
+        email: 'john-doe@gmail.com',
+        token,
+        id: 'id-1',
+      });
     });
   });
 

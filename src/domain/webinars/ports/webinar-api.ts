@@ -7,9 +7,6 @@ export namespace WebinarAPI {
       end: z.coerce.date(),
       title: z.string(),
       seats: z.number(),
-      user: z.object({
-        id: z.string(),
-      }),
     });
 
     export type Request = z.infer<typeof schema>;

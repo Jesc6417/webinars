@@ -6,7 +6,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 export class AuthenticationGuard implements CanActivate {
   constructor(private readonly validateUserToken: ValidateUserToken) {}
 
-  canActivate(context: ExecutionContext): Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const header = request.headers.authorization;
 
@@ -14,6 +14,9 @@ export class AuthenticationGuard implements CanActivate {
 
     const token = extractToken(header);
 
-    return this.validateUserToken.execute(token);
+    const user = await this.validateUserToken.execute(token);
+    request.user = user;
+
+    return Promise.resolve(!!user);
   }
 }

@@ -1,3 +1,4 @@
+import { User } from './../entities/user';
 import { InMemoryUserRepository } from '../adapters';
 import { AuthenticateUser } from './authenticate-user';
 
@@ -9,6 +10,11 @@ describe('Feature: Authenticate user', () => {
     password: 'azerty',
   };
   const token = 'am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==';
+  const johnDoe = new User({
+    email: 'john-doe@gmail.com',
+    token,
+    id: 'id-1',
+  });
 
   beforeEach(async () => {
     userRepository = new InMemoryUserRepository();
@@ -17,19 +23,18 @@ describe('Feature: Authenticate user', () => {
 
   describe('Scenario: Happy path', () => {
     it('should authenticate the user', async () => {
-      userRepository.database.push(token);
+      userRepository.database.push(johnDoe);
 
-      const response = await authenticateUser.execute(payload);
+      const result = await authenticateUser.execute(payload);
 
-      expect(response).toEqual({ authenticated: true });
+      expect(result).toEqual({
+        access_token: 'am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==',
+      });
     });
   });
 
   describe('Scenario: the user does not exist', () => {
     it('should fail', async () => {
-      const authenticator = new InMemoryUserRepository();
-      const authenticateUser = new AuthenticateUser(authenticator);
-
       expect(
         async () => await authenticateUser.execute(payload),
       ).rejects.toThrow('User not found.');
@@ -38,9 +43,6 @@ describe('Feature: Authenticate user', () => {
 
   describe('Scenario: the password is not valid', () => {
     it('should fail', async () => {
-      const authenticator = new InMemoryUserRepository();
-      const authenticateUser = new AuthenticateUser(authenticator);
-
       expect(
         async () =>
           await authenticateUser.execute({

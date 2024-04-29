@@ -11,15 +11,13 @@ describe('Feature: Organizing a webinar', () => {
   let dateGenerator: DateGenerator;
   let organizeWebinar: OrganizeWebinar;
 
-  const user = new User({
-    id: 'john-doe',
-  });
+  const organizerId = 'john-doe';
   const myFirstWebinar = {
     title: 'My first webinar',
     seats: 100,
     start: new Date('2024-05-02T10:00:00.000Z'),
     end: new Date('2024-05-02T11:00:00.000Z'),
-    user,
+    organizerId,
   };
 
   beforeEach(() => {
@@ -39,7 +37,7 @@ describe('Feature: Organizing a webinar', () => {
     end: Date;
     title: string;
     seats: number;
-    user: User;
+    organizerId: string;
   }) => {
     try {
       await organizeWebinar.execute(payload);
@@ -65,7 +63,7 @@ describe('Feature: Organizing a webinar', () => {
         seats: 100,
         start: new Date('2024-05-02T10:00:00.000Z'),
         end: new Date('2024-05-02T11:00:00.000Z'),
-        organizerId: user.props.id,
+        organizerId,
       });
     });
   });

@@ -1,14 +1,20 @@
-import { extractToken } from '@/domain/core';
 import { InMemoryUserRepository, UserRepository } from '@/domain/users';
+import { User } from '@/domain/users/entities/user';
 import { WebinarRepository } from '@/domain/webinars';
 import { addDays } from 'date-fns';
 import * as request from 'supertest';
 import { AppTest } from '../app-test';
 
-xdescribe('Organizing a webinar', () => {
+describe('Organizing a webinar', () => {
   let app: AppTest;
   let webinarRepository: WebinarRepository;
   let userRepository: InMemoryUserRepository;
+  const token = 'am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==';
+  const johnDoe = new User({
+    email: 'john-doe@gmail.com',
+    token,
+    id: 'id-1',
+  });
 
   beforeEach(async () => {
     app = new AppTest();
@@ -26,9 +32,8 @@ xdescribe('Organizing a webinar', () => {
     it('should create the webinar', async () => {
       const start = addDays(new Date(), 4);
       const end = addDays(new Date(), 5);
-      const token = 'am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==';
 
-      userRepository.database.push(token);
+      userRepository.database.push(johnDoe);
 
       const result = await request(app.getHttpServer())
         .post('/webinars')
@@ -38,9 +43,6 @@ xdescribe('Organizing a webinar', () => {
           seats: 100,
           start: start.toISOString(),
           end: end.toISOString(),
-          user: {
-            id: 'john-doe',
-          },
         });
 
       expect(result.status).toBe(201);
@@ -55,7 +57,7 @@ xdescribe('Organizing a webinar', () => {
         seats: 100,
         start,
         end,
-        organizerId: 'john-doe',
+        organizerId: 'id-1',
       });
     });
   });

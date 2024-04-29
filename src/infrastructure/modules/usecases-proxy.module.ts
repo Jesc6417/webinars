@@ -3,6 +3,7 @@ import {
   AuthenticateUser,
   InMemoryUserRepository,
   UserRepository,
+  ValidateUserToken,
 } from '@/domain/users';
 import {
   InMemoryWebinarRepository,
@@ -52,8 +53,14 @@ export class UsecasesProxyModule {
             new AuthenticateUser(authenticatorRepository),
           inject: [UserRepository],
         },
+        {
+          provide: ValidateUserToken,
+          useFactory: (authenticatorRepository: UserRepository) =>
+            new ValidateUserToken(authenticatorRepository),
+          inject: [UserRepository],
+        },
       ],
-      exports: [OrganizeWebinar, AuthenticateUser],
+      exports: [OrganizeWebinar, AuthenticateUser, ValidateUserToken],
     };
   }
 }

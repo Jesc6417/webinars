@@ -1,10 +1,10 @@
-import { OrganizeWebinar } from '@/domain/webinars';
-import { User } from '@/domain/webinars/entities';
-import { WebinarAPI } from '@/domain/webinars/ports';
-import { Body, Controller, Post } from '@nestjs/common';
+import { AuthenticationGuard } from './../guards';
+import { OrganizeWebinar, User, WebinarAPI } from '@/domain/webinars';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ValidationPipe } from './../pipes/validation.pipe';
 
 @Controller('/webinars')
+@UseGuards(AuthenticationGuard)
 export class WebinarController {
   constructor(private readonly organizeWebinar: OrganizeWebinar) {}
 

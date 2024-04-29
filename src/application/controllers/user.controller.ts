@@ -9,10 +9,12 @@ export class UserController {
 
   @Post('/authenticate')
   @HttpCode(200)
-  handleAuthenticateUser(
+  async handleAuthenticateUser(
     @Body(new ValidationPipe(UserApi.AuthenticateUser.schema))
     data: UserApi.AuthenticateUser.Request,
   ): Promise<UserApi.AuthenticateUser.Response> {
-    return this.authenticateUser.execute(data);
+    const result = await this.authenticateUser.execute(data);
+
+    return result;
   }
 }

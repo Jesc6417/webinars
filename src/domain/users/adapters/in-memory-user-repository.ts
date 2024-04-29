@@ -1,4 +1,4 @@
-import { UserRepository } from '../ports/user.repository';
+import { UserRepository } from '../ports';
 
 export class InMemoryUserRepository extends UserRepository {
   readonly database: string[] = [];

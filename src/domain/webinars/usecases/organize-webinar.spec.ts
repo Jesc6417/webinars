@@ -1,7 +1,7 @@
 import { User } from './../entities';
 import { DateGenerator, IdGenerator } from './../../core';
-import { FixedDateGenerator } from './../../core/adapters/fixed-date.generator';
-import { FixedIdGenerator } from './../../core/adapters/fixed-id.generator';
+import { FixedDateGenerator } from '../../core/date/adapters/fixed-date.generator';
+import { FixedIdGenerator } from '../../core/id/adapters/fixed-id.generator';
 import { InMemoryWebinarRepository } from './../adapters';
 import { OrganizeWebinar } from './organize-webinar';
 

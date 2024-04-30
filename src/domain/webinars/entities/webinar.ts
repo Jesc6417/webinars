@@ -1,3 +1,4 @@
+import { Entity } from './../../core';
 import { differenceInDays } from 'date-fns';
 
 type WebinarProps = {
@@ -9,17 +10,7 @@ type WebinarProps = {
   organizerId: string;
 };
 
-export class Webinar {
-  initialState: WebinarProps;
-  props: WebinarProps;
-
-  constructor(data: WebinarProps) {
-    this.initialState = { ...data };
-    this.props = { ...data };
-
-    Object.freeze(this.initialState);
-  }
-
+export class Webinar extends Entity<WebinarProps> {
   isTooSoon(now: Date) {
     const diff = differenceInDays(this.props.start, now);
 
@@ -32,14 +23,6 @@ export class Webinar {
 
   hasNoSeats() {
     return this.props.seats < 1;
-  }
-
-  update(data: Partial<WebinarProps>) {
-    this.props = { ...this.props, ...data };
-  }
-
-  commit() {
-    this.initialState = this.props;
   }
 
   isCreator(organizerId: string) {

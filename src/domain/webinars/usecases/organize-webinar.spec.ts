@@ -1,3 +1,4 @@
+import { WebinarSeeds } from './../tests/webinar.seeds';
 import { DateGenerator, IdGenerator } from './../../core';
 import { FixedDateGenerator } from '../../core/date/adapters/fixed-date.generator';
 import { FixedIdGenerator } from '../../core/id/adapters/fixed-id.generator';
@@ -9,15 +10,6 @@ describe('Feature: Organizing a webinar', () => {
   let idGenerator: IdGenerator;
   let dateGenerator: DateGenerator;
   let organizeWebinar: OrganizeWebinar;
-
-  const organizerId = 'john-doe';
-  const myFirstWebinar = {
-    title: 'My first webinar',
-    seats: 100,
-    start: new Date('2024-05-02T10:00:00.000Z'),
-    end: new Date('2024-05-02T11:00:00.000Z'),
-    organizerId,
-  };
 
   beforeEach(() => {
     inMemoryWebinarRepository = new InMemoryWebinarRepository();
@@ -46,30 +38,33 @@ describe('Feature: Organizing a webinar', () => {
   };
 
   describe('Scenario: Happy path', () => {
+    const payload = {
+      title: 'My first webinar',
+      seats: 100,
+      start: new Date('2024-05-12T10:00:00.000Z'),
+      end: new Date('2024-05-12T11:00:00.000Z'),
+      organizerId: 'alice',
+    };
+
     it('should return the webinars id', async () => {
-      const response = await organizeWebinar.execute(myFirstWebinar);
+      const response = await organizeWebinar.execute(payload);
 
       expect(response).toEqual({ id: expect.any(String) });
     });
 
     it('should insert the webinar into the databaes', async () => {
-      const response = await organizeWebinar.execute(myFirstWebinar);
+      const response = await organizeWebinar.execute(payload);
 
       const webinar = await inMemoryWebinarRepository.findById(response.id);
-      expect(webinar!.props).toEqual({
-        id: 'id-1',
-        title: 'My first webinar',
-        seats: 100,
-        start: new Date('2024-05-02T10:00:00.000Z'),
-        end: new Date('2024-05-02T11:00:00.000Z'),
-        organizerId,
-      });
+      expect(webinar!.props).toEqual(WebinarSeeds.existingWebinar.props);
     });
   });
 
   describe('Scenario: the webinar happens too soon', () => {
     const payload = {
-      ...myFirstWebinar,
+      title: 'My first webinar',
+      seats: 100,
+      organizerId: 'alice',
       start: new Date('2024-04-28T10:00:00.000Z'),
       end: new Date('2024-04-28T12:00:00.000Z'),
     };
@@ -87,7 +82,10 @@ describe('Feature: Organizing a webinar', () => {
 
   describe('Scenario: the webinar has too many seats', () => {
     const payload = {
-      ...myFirstWebinar,
+      title: 'My first webinar',
+      start: new Date('2024-05-12T10:00:00.000Z'),
+      end: new Date('2024-05-12T11:00:00.000Z'),
+      organizerId: 'alice',
       seats: 1001,
     };
 
@@ -104,7 +102,10 @@ describe('Feature: Organizing a webinar', () => {
 
   describe('Scenario: the webinar has no seats', () => {
     const payload = {
-      ...myFirstWebinar,
+      title: 'My first webinar',
+      start: new Date('2024-05-12T10:00:00.000Z'),
+      end: new Date('2024-05-12T11:00:00.000Z'),
+      organizerId: 'alice',
       seats: 0,
     };
 

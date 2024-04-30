@@ -1,18 +1,10 @@
-import { Webinar } from './../entities';
-import { ChangeSeats } from './change-seats';
 import { InMemoryWebinarRepository } from './../adapters';
+import { WebinarSeeds } from './../tests/webinar.seeds';
+import { ChangeSeats } from './change-seats';
 
 describe('Feature: Changing number of seats', () => {
   let inMemoryWebinarRepository: InMemoryWebinarRepository;
   let changeSeats: ChangeSeats;
-  const existingWebinar = new Webinar({
-    id: 'id-1',
-    title: 'My first webinar',
-    seats: 100,
-    start: new Date('2024-05-12T10:00:00.000Z'),
-    end: new Date('2024-05-12T11:00:00.000Z'),
-    organizerId: 'john-doe',
-  });
 
   async function shouldNotUpdateSeats() {
     const webinar = await inMemoryWebinarRepository.findById('id-1');
@@ -23,18 +15,18 @@ describe('Feature: Changing number of seats', () => {
     inMemoryWebinarRepository = new InMemoryWebinarRepository();
     changeSeats = new ChangeSeats(inMemoryWebinarRepository);
 
-    inMemoryWebinarRepository.database.push(existingWebinar);
+    inMemoryWebinarRepository.database.push(WebinarSeeds.existingWebinar);
   });
 
   describe('Scenario: Happy path', () => {
-    it('should updated the number of seats', async () => {
-      const request = {
-        webinarId: 'id-1',
-        seats: 200,
-        organizerId: 'john-doe',
-      };
+    const payload = {
+      webinarId: 'id-1',
+      seats: 200,
+      organizerId: 'alice',
+    };
 
-      await changeSeats.execute(request);
+    it('should updated the number of seats', async () => {
+      await changeSeats.execute(payload);
 
       const webinar = await inMemoryWebinarRepository.findById('id-1');
       expect(webinar!.props.seats).toBe(200);
@@ -42,14 +34,14 @@ describe('Feature: Changing number of seats', () => {
   });
 
   describe('Scenario: Webinar not found', () => {
-    it('should fail', async () => {
-      const request = {
-        webinarId: 'id-2',
-        seats: 200,
-        organizerId: 'john-doe',
-      };
+    const payload = {
+      seats: 200,
+      organizerId: 'alice',
+      webinarId: 'id-2',
+    };
 
-      expect(async () => await changeSeats.execute(request)).rejects.toThrow(
+    it('should fail', async () => {
+      expect(async () => await changeSeats.execute(payload)).rejects.toThrow(
         'Webinar not found.',
       );
 
@@ -58,14 +50,14 @@ describe('Feature: Changing number of seats', () => {
   });
 
   describe('Scenario: Webinar can only be modified by the creator', () => {
-    it('should fail', async () => {
-      const request = {
-        webinarId: 'id-1',
-        seats: 200,
-        organizerId: 'jane-doe',
-      };
+    const payload = {
+      webinarId: 'id-1',
+      seats: 200,
+      organizerId: 'bob',
+    };
 
-      expect(async () => await changeSeats.execute(request)).rejects.toThrow(
+    it('should fail', async () => {
+      expect(async () => await changeSeats.execute(payload)).rejects.toThrow(
         'You are not allowed to modify this webinar.',
       );
 
@@ -74,14 +66,14 @@ describe('Feature: Changing number of seats', () => {
   });
 
   describe('Scenario: Seats cannot be reduced', () => {
-    it('should fail', async () => {
-      const request = {
-        webinarId: 'id-1',
-        seats: 50,
-        organizerId: 'john-doe',
-      };
+    const payload = {
+      webinarId: 'id-1',
+      seats: 50,
+      organizerId: 'alice',
+    };
 
-      expect(async () => await changeSeats.execute(request)).rejects.toThrow(
+    it('should fail', async () => {
+      expect(async () => await changeSeats.execute(payload)).rejects.toThrow(
         'You cannot reduce number of seats.',
       );
 
@@ -90,35 +82,18 @@ describe('Feature: Changing number of seats', () => {
   });
 
   describe('Scenario: Seats cannot be updated to more than 1000 seats', () => {
-    it('should fail', async () => {
-      const request = {
-        webinarId: 'id-1',
-        seats: 1001,
-        organizerId: 'john-doe',
-      };
+    const payload = {
+      webinarId: 'id-1',
+      organizerId: 'alice',
+      seats: 1001,
+    };
 
-      expect(async () => await changeSeats.execute(request)).rejects.toThrow(
+    it('should fail', async () => {
+      expect(async () => await changeSeats.execute(payload)).rejects.toThrow(
         'Webinar must have a maximum of 1000 seats.',
       );
 
       await shouldNotUpdateSeats();
-    });
-  });
-
-  xdescribe('Scenario: Seats cannot be updated to less than 0 seat', () => {
-    it('should fail', async () => {
-      const request = {
-        webinarId: 'id-1',
-        seats: 0,
-        organizerId: 'john-doe',
-      };
-
-      expect(async () => await changeSeats.execute(request)).rejects.toThrow(
-        'Webinar must have at least 1 seat.',
-      );
-
-      const webinar = await inMemoryWebinarRepository.findById('id-1');
-      expect(webinar!.props.seats).toBe(100);
     });
   });
 });

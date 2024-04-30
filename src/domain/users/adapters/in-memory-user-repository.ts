@@ -1,5 +1,5 @@
 import { UserRepository } from '../ports';
-import { User } from './../entities/user';
+import { User } from './../entities';
 
 export class InMemoryUserRepository extends UserRepository {
   readonly database: User[] = [];

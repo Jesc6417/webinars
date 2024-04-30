@@ -1,6 +1,7 @@
-import { UserRepository } from '@/domain/users';
+import { Executable } from './../../core';
+import { User, UserRepository } from './../../users';
 
-export class ValidateUserToken {
+export class ValidateUserToken implements Executable<string, User> {
   constructor(private readonly userRepository: UserRepository) {}
 
   async execute(token: string) {

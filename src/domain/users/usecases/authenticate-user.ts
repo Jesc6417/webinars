@@ -1,10 +1,14 @@
+import { Executable } from './../../core';
 import { UserRepository } from './../ports';
 
-export class AuthenticateUser {
+type Request = { email: string; password: string };
+type Response = { access_token: string };
+
+export class AuthenticateUser implements Executable<Request, Response> {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(payload: { email: string; password: string }) {
-    const token = await this.userRepository.authenticate(payload);
+  async execute(request: Request) {
+    const token = await this.userRepository.authenticate(request);
 
     if (!token) throw new Error('User not found.');
 

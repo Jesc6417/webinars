@@ -1,8 +1,10 @@
-import { WebinarRepository } from '@/domain/webinars';
+import { Executable } from './../../core';
+import { WebinarRepository } from './../ports';
 
 type Request = { webinarId: string; seats: number; organizerId: string };
+type Response = void;
 
-export class ChangeSeats {
+export class ChangeSeats implements Executable<Request, Response> {
   constructor(private readonly webinarRepository: WebinarRepository) {}
 
   async execute(request: Request) {

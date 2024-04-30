@@ -1,20 +1,10 @@
-import { User } from './../entities/user';
+import { UserSeeds } from './../tests/user.seeds';
 import { InMemoryUserRepository } from '../adapters';
 import { AuthenticateUser } from './authenticate-user';
 
 describe('Feature: Authenticate user', () => {
   let userRepository: InMemoryUserRepository;
   let authenticateUser: AuthenticateUser;
-  const payload = {
-    email: 'john-doe@gmail.com',
-    password: 'azerty',
-  };
-  const token = 'am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==';
-  const johnDoe = new User({
-    email: 'john-doe@gmail.com',
-    token,
-    id: 'id-1',
-  });
 
   beforeEach(async () => {
     userRepository = new InMemoryUserRepository();
@@ -22,18 +12,28 @@ describe('Feature: Authenticate user', () => {
   });
 
   describe('Scenario: Happy path', () => {
+    const payload = {
+      email: 'alice@gmail.com',
+      password: 'azerty',
+    };
+
     it('should authenticate the user', async () => {
-      userRepository.database.push(johnDoe);
+      userRepository.database.push(UserSeeds.alice);
 
       const result = await authenticateUser.execute(payload);
 
       expect(result).toEqual({
-        access_token: 'am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==',
+        access_token: UserSeeds.token,
       });
     });
   });
 
   describe('Scenario: the user does not exist', () => {
+    const payload = {
+      email: 'alice@gmail.com',
+      password: 'azerty',
+    };
+
     it('should fail', async () => {
       expect(
         async () => await authenticateUser.execute(payload),
@@ -42,13 +42,14 @@ describe('Feature: Authenticate user', () => {
   });
 
   describe('Scenario: the password is not valid', () => {
+    const payload = {
+      email: 'alice@gmail.com',
+      password: 'not-valid-password',
+    };
+
     it('should fail', async () => {
       expect(
-        async () =>
-          await authenticateUser.execute({
-            ...payload,
-            password: 'not-valid-password',
-          }),
+        async () => await authenticateUser.execute(payload),
       ).rejects.toThrow('User not found.');
     });
   });

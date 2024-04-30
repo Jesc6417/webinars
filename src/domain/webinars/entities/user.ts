@@ -1,7 +1,7 @@
+import { Entity } from './../../core';
+
 type UserProps = {
   id: string;
 };
 
-export class User {
-  constructor(public props: UserProps) {}
-}
+export class User extends Entity<UserProps> {}

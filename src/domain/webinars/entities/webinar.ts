@@ -32,4 +32,8 @@ export class Webinar extends Entity<WebinarProps> {
   hasLessSeats(seats: number) {
     return this.props.seats > seats;
   }
+
+  endsBeforeStart() {
+    return this.props.end < this.props.start;
+  }
 }

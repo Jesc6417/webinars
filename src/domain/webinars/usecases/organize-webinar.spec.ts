@@ -69,7 +69,7 @@ describe('Feature: Organizing a webinar', () => {
       end: new Date('2024-04-28T12:00:00.000Z'),
     };
 
-    it('should return an error', async () => {
+    it('should fail', async () => {
       expect(
         async () => await organizeWebinar.execute(payload),
       ).rejects.toThrow('Webinar must happen in at least 3 days.');
@@ -89,7 +89,7 @@ describe('Feature: Organizing a webinar', () => {
       seats: 1001,
     };
 
-    it('should return an error', async () => {
+    it('should fail', async () => {
       expect(
         async () => await organizeWebinar.execute(payload),
       ).rejects.toThrow('Webinar must have a maximum of 1000 seats.');
@@ -109,10 +109,30 @@ describe('Feature: Organizing a webinar', () => {
       seats: 0,
     };
 
-    it('should return an error', async () => {
+    it('should fail', async () => {
       expect(
         async () => await organizeWebinar.execute(payload),
       ).rejects.toThrow('Webinar must have at least 1 seat.');
+    });
+
+    it('should not create the webinar into the database', async () => {
+      await shouldNotCreateWebinarInDatabase(payload);
+    });
+  });
+
+  describe('Scenario: Webinar cannot end before it starts.', () => {
+    const payload = {
+      title: 'My first webinar',
+      start: new Date('2024-05-12T10:00:00.000Z'),
+      end: new Date('2024-05-12T09:00:00.000Z'),
+      organizerId: 'alice',
+      seats: 100,
+    };
+
+    it('should fail', async () => {
+      expect(
+        async () => await organizeWebinar.execute(payload),
+      ).rejects.toThrow('Webinar cannot end before it starts.');
     });
 
     it('should not create the webinar into the database', async () => {

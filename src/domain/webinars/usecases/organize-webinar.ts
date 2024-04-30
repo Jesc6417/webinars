@@ -41,6 +41,9 @@ export class OrganizeWebinar implements Executable<Request, Response> {
     if (webinar.hasNoSeats())
       throw new Error('Webinar must have at least 1 seat.');
 
+    if (webinar.endsBeforeStart())
+      throw new Error('Webinar cannot end before it starts.');
+
     await this.webinarRepository.create(webinar);
 
     return { id };

@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { AppTest } from '../app-test';
 import { e2eUsers } from '../seeders/user.seeds';
 
-describe('Organizing a webinar', () => {
+describe('Feature: Organizing a webinar', () => {
   let app: AppTest;
   let webinarRepository: WebinarRepository;
   const start = addDays(new Date(), 4);
@@ -50,7 +50,7 @@ describe('Organizing a webinar', () => {
         id: result.body.id,
         start,
         end,
-        organizerId: 'id-1',
+        organizerId: 'john-doe',
       });
     });
   });

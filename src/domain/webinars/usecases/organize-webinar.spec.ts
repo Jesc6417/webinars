@@ -1,4 +1,3 @@
-import { User } from './../entities';
 import { DateGenerator, IdGenerator } from './../../core';
 import { FixedDateGenerator } from '../../core/date/adapters/fixed-date.generator';
 import { FixedIdGenerator } from '../../core/id/adapters/fixed-id.generator';

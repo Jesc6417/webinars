@@ -1,16 +1,25 @@
-import { Webinar } from '../entities/webinar';
+import { Webinar } from '../entities';
 import { WebinarRepository } from '../ports';
 
 export class InMemoryWebinarRepository implements WebinarRepository {
   readonly database: Webinar[] = [];
 
   async findById(id: string): Promise<Webinar | null> {
-    return this.database.find((webinar) => webinar.props.id === id) || null;
+    const webinar = this.database.find((webinar) => webinar.props.id === id);
+
+    return webinar ? new Webinar({ ...webinar.initialState }) : null;
   }
 
-  create(webinar: Webinar) {
+  async create(webinar: Webinar) {
     this.database.push(webinar);
+  }
 
-    return Promise.resolve();
+  async update(webinar: Webinar) {
+    const index = this.database.findIndex(
+      (w) => w.props.id === webinar.props.id,
+    );
+    this.database[index] = webinar;
+
+    webinar.commit();
   }
 }

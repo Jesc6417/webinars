@@ -1,4 +1,4 @@
-import { DateGenerator, IdGenerator } from '@/domain/core';
+import { DateProvider, IdGenerator } from '@/domain/core';
 import {
   AuthenticateUser,
   InMemoryUserRepository,
@@ -12,7 +12,7 @@ import {
   WebinarRepository,
 } from '@/domain/webinars';
 import { Module } from '@nestjs/common';
-import { CurrentDateGenerator, UuidGenerator } from './../generators';
+import { CurrentDateProvider, UuidProvider } from '../providers';
 
 @Module({
   imports: [],
@@ -28,21 +28,21 @@ export class UsecasesProxyModule {
         },
         {
           provide: IdGenerator,
-          useClass: UuidGenerator,
+          useClass: UuidProvider,
         },
         {
-          provide: DateGenerator,
-          useClass: CurrentDateGenerator,
+          provide: DateProvider,
+          useClass: CurrentDateProvider,
         },
         {
           provide: OrganizeWebinar,
           useFactory: (
             webinarRepository: WebinarRepository,
             idGenerator: IdGenerator,
-            dateGenerator: DateGenerator,
+            dateGenerator: DateProvider,
           ) =>
             new OrganizeWebinar(webinarRepository, idGenerator, dateGenerator),
-          inject: [WebinarRepository, IdGenerator, DateGenerator],
+          inject: [WebinarRepository, IdGenerator, DateProvider],
         },
         {
           provide: UserRepository,

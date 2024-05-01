@@ -6,8 +6,8 @@ describe('Feature: Changing number of seats', () => {
   let inMemoryWebinarRepository: InMemoryWebinarRepository;
   let changeSeats: ChangeSeats;
 
-  async function shouldNotUpdateSeats() {
-    const webinar = await inMemoryWebinarRepository.findById('id-1');
+  function shouldNotUpdateSeats() {
+    const webinar = inMemoryWebinarRepository.findByIdSync('id-1');
     expect(webinar!.props.seats).toBe(100);
   }
 
@@ -45,7 +45,7 @@ describe('Feature: Changing number of seats', () => {
         'Webinar not found.',
       );
 
-      await shouldNotUpdateSeats();
+      shouldNotUpdateSeats();
     });
   });
 
@@ -61,7 +61,7 @@ describe('Feature: Changing number of seats', () => {
         'You are not allowed to modify this webinar.',
       );
 
-      await shouldNotUpdateSeats();
+      shouldNotUpdateSeats();
     });
   });
 
@@ -77,7 +77,7 @@ describe('Feature: Changing number of seats', () => {
         'You cannot reduce number of seats.',
       );
 
-      await shouldNotUpdateSeats();
+      shouldNotUpdateSeats();
     });
   });
 
@@ -93,7 +93,7 @@ describe('Feature: Changing number of seats', () => {
         'Webinar must have a maximum of 1000 seats.',
       );
 
-      await shouldNotUpdateSeats();
+      shouldNotUpdateSeats();
     });
   });
 });

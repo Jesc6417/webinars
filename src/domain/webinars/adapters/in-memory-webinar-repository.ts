@@ -4,6 +4,12 @@ import { WebinarRepository } from '../ports';
 export class InMemoryWebinarRepository implements WebinarRepository {
   readonly database: Webinar[] = [];
 
+  findByIdSync(id: string): Webinar | null {
+    const webinar = this.database.find((webinar) => webinar.props.id === id);
+
+    return webinar ? new Webinar({ ...webinar.initialState }) : null;
+  }
+
   async findById(id: string): Promise<Webinar | null> {
     const webinar = this.database.find((webinar) => webinar.props.id === id);
 

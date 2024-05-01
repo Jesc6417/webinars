@@ -1,1 +1,1 @@
-export * from './date.generator';
+export * from './date.provider';

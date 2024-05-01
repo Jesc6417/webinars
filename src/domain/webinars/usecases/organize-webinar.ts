@@ -1,5 +1,5 @@
 import { WebinarRepository } from '../ports';
-import { DateGenerator, Executable, IdGenerator } from './../../core';
+import { DateProvider, Executable, IdGenerator } from './../../core';
 import { Webinar } from './../entities';
 
 type Request = {
@@ -18,7 +18,7 @@ export class OrganizeWebinar implements Executable<Request, Response> {
   constructor(
     private readonly webinarRepository: WebinarRepository,
     private readonly idGenerator: IdGenerator,
-    private readonly dateGenerator: DateGenerator,
+    private readonly dateGenerator: DateProvider,
   ) {}
 
   async execute(request: Request) {

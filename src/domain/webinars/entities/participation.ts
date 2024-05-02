@@ -1,7 +1,7 @@
 import { Entity } from './../../core';
 
 type PropsParticipation = {
-  userId: string;
+  participantId: string;
   webinarId: string;
 };
 

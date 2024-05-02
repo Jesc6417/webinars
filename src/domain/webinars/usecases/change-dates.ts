@@ -1,6 +1,12 @@
+import {
+  WebinarNotFoundException,
+  WebinarUpdateForbiddenException,
+  WebinarTooEarlyException,
+  WebinarCannotEndBeforeStartsException,
+} from '../exceptions';
 import { Webinar } from './../entities';
 import { format } from 'date-fns';
-import { Mailer } from './../../core/mailer/ports/mailer';
+import { Mailer } from './../../core';
 import {
   ParticipationRepository,
   ParticipantRepository,
@@ -29,22 +35,22 @@ export class ChangeDates implements Executable<Request, Response> {
   async execute(request: Request) {
     const webinar = await this.webinarRepository.findById(request.webinarId);
 
-    if (!webinar) throw new Error('Webinar not found.');
+    if (!webinar) throw new WebinarNotFoundException();
 
-    if (!webinar.isCreator(request.organizerId))
-      throw new Error('You are not allowed to modify this webinar.');
+    if (!webinar.isOrganizer(request.organizerId))
+      throw new WebinarUpdateForbiddenException();
 
     if (request.start) {
       webinar.update({ start: request.start });
 
       if (webinar.isTooSoon(this.dateGenerator.now()))
-        throw new Error('Webinar must happen in at least 3 days.');
+        throw new WebinarTooEarlyException();
     }
 
     if (request.end) webinar.update({ end: request.end });
 
     if (webinar.endsBeforeStart())
-      throw new Error('Webinar cannot end before it starts.');
+      throw new WebinarCannotEndBeforeStartsException();
 
     await this.webinarRepository.update(webinar!);
     await this.notifyParticipants(webinar);

@@ -1,3 +1,9 @@
+import {
+  WebinarCannotEndBeforeStartsException,
+  WebinarNotEnoughSeatException,
+  WebinarTooEarlyException,
+  WebinarTooManySeatsException,
+} from './../exceptions';
 import { WebinarRepository } from '../ports';
 import { DateProvider, Executable, IdGenerator } from './../../core';
 import { Organizer, Webinar } from './../entities';
@@ -33,16 +39,14 @@ export class OrganizeWebinar implements Executable<Request, Response> {
     });
 
     if (webinar.isTooSoon(this.dateGenerator.now()))
-      throw new Error('Webinar must happen in at least 3 days.');
+      throw new WebinarTooEarlyException();
 
-    if (webinar.hasTooManySeats())
-      throw new Error('Webinar must have a maximum of 1000 seats.');
+    if (webinar.hasTooManySeats()) throw new WebinarTooManySeatsException();
 
-    if (webinar.hasNoSeats())
-      throw new Error('Webinar must have at least 1 seat.');
+    if (webinar.hasNoSeats()) throw new WebinarNotEnoughSeatException();
 
     if (webinar.endsBeforeStart())
-      throw new Error('Webinar cannot end before it starts.');
+      throw new WebinarCannotEndBeforeStartsException();
 
     await this.webinarRepository.create(webinar);
 

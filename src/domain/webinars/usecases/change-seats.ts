@@ -1,3 +1,10 @@
+import {
+  WebinarNotFoundException,
+  WebinarUpdateForbiddenException,
+  WebinarCannotEndBeforeStartsException,
+  WebinarTooManySeatsException,
+  WebinarCannotReduceNumberOfSeatsException,
+} from './../exceptions';
 import { Organizer } from './../entities';
 import { Executable } from './../../core';
 import { WebinarRepository } from './../ports';
@@ -11,18 +18,17 @@ export class ChangeSeats implements Executable<Request, Response> {
   async execute(request: Request) {
     const webinar = await this.webinarRepository.findById(request.webinarId);
 
-    if (!webinar) throw new Error('Webinar not found.');
+    if (!webinar) throw new WebinarNotFoundException();
 
-    if (!webinar.isCreator(request.organizer.props.id))
-      throw new Error('You are not allowed to modify this webinar.');
+    if (!webinar.isOrganizer(request.organizer.props.id))
+      throw new WebinarUpdateForbiddenException();
 
     if (webinar.hasLessSeats(request.seats))
-      throw new Error('You cannot reduce number of seats.');
+      throw new WebinarCannotReduceNumberOfSeatsException();
 
     webinar.update({ seats: request.seats });
 
-    if (webinar.hasTooManySeats())
-      throw new Error('Webinar must have a maximum of 1000 seats.');
+    if (webinar.hasTooManySeats()) throw new WebinarTooManySeatsException();
 
     await this.webinarRepository.update(webinar);
   }

@@ -1,5 +1,4 @@
-import { MailerFacade } from './../../core/mailer/adapters/mailer.facade';
-import { Participation, Participant } from './../entities';
+import { MailerFacade } from './../../core';
 import { DateProvider, FixedDateProvider } from './../../core';
 import {
   InMemoryWebinarRepository,
@@ -58,18 +57,10 @@ describe('Feature: Change webinars dates', () => {
 
     it('should send an email to the participants', async () => {
       participationRepository.database.push(
-        new Participation({
-          webinarId: WebinarSeeds.existingWebinar.props.id,
-          userId: 'bob',
-        }),
+        ...WebinarSeeds.existingParticipation,
       );
 
-      participantRepository.database.push(
-        new Participant({
-          id: 'bob',
-          email: 'bob@gmail.com',
-        }),
-      );
+      participantRepository.database.push(...WebinarSeeds.existingParticipant);
 
       await useCase.execute({
         webinarId: WebinarSeeds.existingWebinar.props.id,
@@ -79,7 +70,10 @@ describe('Feature: Change webinars dates', () => {
       });
 
       expect(mailer.sentEmails).toHaveLength(1);
-      expect(mailer.sentEmails[0].bcc).toEqual(['bob@gmail.com']);
+      expect(mailer.sentEmails[0].bcc).toEqual([
+        'participant-1@gmail.com',
+        'participant-2@gmail.com',
+      ]);
       expect(mailer.sentEmails[0].subject).toEqual('Webinar dates changed');
       expect(mailer.sentEmails[0].body).toEqual(
         'The webinar "My first webinar" has new dates: 12/05/2024 12:00 - 12/05/2024 13:00.',

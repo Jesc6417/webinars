@@ -28,4 +28,10 @@ export class InMemoryWebinarRepository implements WebinarRepository {
 
     webinar.commit();
   }
+
+  async cancel(webinarId: string): Promise<void> {
+    const index = this.database.findIndex((w) => w.props.id === webinarId);
+
+    this.database.splice(index, 1);
+  }
 }

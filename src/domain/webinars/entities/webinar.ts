@@ -26,7 +26,7 @@ export class Webinar extends Entity<WebinarProps> {
     return this.props.seats < 1;
   }
 
-  isCreator(organizerId: string) {
+  isOrganizer(organizerId: string) {
     return this.props.organizer.props.id === organizerId;
   }
 

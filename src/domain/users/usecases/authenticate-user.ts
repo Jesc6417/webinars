@@ -1,3 +1,4 @@
+import { UserNotFoundException } from './../exceptions';
 import { Executable } from './../../core';
 import { UserRepository } from './../ports';
 
@@ -10,7 +11,7 @@ export class AuthenticateUser implements Executable<Request, Response> {
   async execute(request: Request) {
     const token = await this.userRepository.authenticate(request);
 
-    if (!token) throw new Error('User not found.');
+    if (!token) throw new UserNotFoundException();
 
     return { access_token: token };
   }

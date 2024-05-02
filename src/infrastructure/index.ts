@@ -1,1 +1,1 @@
-export * from './usecases-proxy.module';
+export * from './providers';

@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../src/client/app.module';
 import { Fixture } from './fixtures/fixture';
 
 export class AppTest {

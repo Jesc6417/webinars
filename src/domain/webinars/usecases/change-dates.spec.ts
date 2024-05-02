@@ -1,12 +1,20 @@
-import { FixedDateProvider } from '../../core/date/adapters/fixed-date.provider';
-import { DateProvider } from './../../core';
-import { InMemoryWebinarRepository } from './../adapters';
+import { MailerFacade } from './../../core/mailer/adapters/mailer.facade';
+import { Participation, Participant } from './../entities';
+import { DateProvider, FixedDateProvider } from './../../core';
+import {
+  InMemoryWebinarRepository,
+  InMemoryParticipationRepository,
+  InMemoryParticipantRepository,
+} from './../adapters';
 import { WebinarSeeds } from './../tests/webinar.seeds';
 import { ChangeDates } from './change-dates';
 
 describe('Feature: Change webinars dates', () => {
   let webinarRepository: InMemoryWebinarRepository;
+  let participationRepository: InMemoryParticipationRepository;
+  let participantRepository: InMemoryParticipantRepository;
   let dateProvider: DateProvider;
+  let mailer: MailerFacade;
   let useCase: ChangeDates;
 
   function shouldNotChangeDates() {
@@ -17,8 +25,17 @@ describe('Feature: Change webinars dates', () => {
 
   beforeEach(() => {
     webinarRepository = new InMemoryWebinarRepository();
+    participationRepository = new InMemoryParticipationRepository();
+    participantRepository = new InMemoryParticipantRepository();
+    mailer = new MailerFacade();
     dateProvider = new FixedDateProvider();
-    useCase = new ChangeDates(webinarRepository, dateProvider);
+    useCase = new ChangeDates(
+      webinarRepository,
+      participationRepository,
+      participantRepository,
+      dateProvider,
+      mailer,
+    );
 
     webinarRepository.database.push(WebinarSeeds.existingWebinar);
   });
@@ -37,6 +54,36 @@ describe('Feature: Change webinars dates', () => {
         new Date('2024-05-12T10:00:00.000Z'),
       );
       expect(webinar!.props.end).toEqual(new Date('2024-05-12T11:00:00.000Z'));
+    });
+
+    it('should send an email to the participants', async () => {
+      participationRepository.database.push(
+        new Participation({
+          webinarId: WebinarSeeds.existingWebinar.props.id,
+          userId: 'bob',
+        }),
+      );
+
+      participantRepository.database.push(
+        new Participant({
+          id: 'bob',
+          email: 'bob@gmail.com',
+        }),
+      );
+
+      await useCase.execute({
+        webinarId: WebinarSeeds.existingWebinar.props.id,
+        start: new Date('2024-05-12T10:00:00.000Z'),
+        end: new Date('2024-05-12T11:00:00.000Z'),
+        organizerId: 'alice',
+      });
+
+      expect(mailer.sentEmails).toHaveLength(1);
+      expect(mailer.sentEmails[0].bcc).toEqual(['bob@gmail.com']);
+      expect(mailer.sentEmails[0].subject).toEqual('Webinar dates changed');
+      expect(mailer.sentEmails[0].body).toEqual(
+        'The webinar "My first webinar" has new dates: 12/05/2024 12:00 - 12/05/2024 13:00.',
+      );
     });
 
     it('should change the start of the webinar', async () => {

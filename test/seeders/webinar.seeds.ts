@@ -14,7 +14,7 @@ export const e2eWebinars = {
       start,
       end,
       seats: 100,
-      organizerId: e2eUsers.johnDoe.entity.props.id,
+      organizer: e2eUsers.johnDoe.entity,
     }),
   ),
 };

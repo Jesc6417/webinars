@@ -1,7 +1,5 @@
-import { User } from '@/domain/users/entities/user';
 import * as request from 'supertest';
 import { AppTest } from '../app-test';
-import { UserFixture } from '../fixtures/user.fixture';
 import { e2eUsers } from '../seeders/user.seeds';
 
 describe('Authenticate User', () => {
@@ -21,12 +19,16 @@ describe('Authenticate User', () => {
     await app.cleanup();
   });
 
-  it('Scenario: Happy path', async () => {
-    const result = await request(app.getHttpServer())
-      .post('/users/authenticate')
-      .send(payload);
+  describe('Scenario: Happy path', () => {
+    it('should succeed', async () => {
+      const result = await request(app.getHttpServer())
+        .post('/users/authenticate')
+        .send(payload);
 
-    expect(result.status).toBe(200);
-    expect(result.body).toEqual({ access_token: e2eUsers.johnDoe.getToken() });
+      expect(result.status).toBe(200);
+      expect(result.body).toEqual({
+        access_token: e2eUsers.johnDoe.getToken(),
+      });
+    });
   });
 });

@@ -18,7 +18,7 @@ export class WebinarFixture extends Fixture {
     await webinarRepository.create(this.entity);
   }
 
-  async get(app: AppTest): Promise<Webinar | null> {
+  async getById(app: AppTest): Promise<Webinar | null> {
     const webinarRepository: InMemoryWebinarRepository =
       app.get(WebinarRepository);
 

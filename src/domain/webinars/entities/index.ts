@@ -1,2 +1,4 @@
 export * from './webinar';
-export * from './user';
+export * from './organizer';
+export * from './participation';
+export * from './participant';

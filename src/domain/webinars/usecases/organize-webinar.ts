@@ -1,13 +1,13 @@
 import { WebinarRepository } from '../ports';
 import { DateProvider, Executable, IdGenerator } from './../../core';
-import { Webinar } from './../entities';
+import { Organizer, Webinar } from './../entities';
 
 type Request = {
   start: Date;
   end: Date;
   title: string;
   seats: number;
-  organizerId: string;
+  organizer: Organizer;
 };
 
 type Response = {
@@ -29,7 +29,7 @@ export class OrganizeWebinar implements Executable<Request, Response> {
       seats: request.seats,
       start: request.start,
       end: request.end,
-      organizerId: request.organizerId,
+      organizer: request.organizer,
     });
 
     if (webinar.isTooSoon(this.dateGenerator.now()))

@@ -2,8 +2,9 @@ import { AuthenticationGuard } from './../guards';
 import {
   ChangeSeats,
   OrganizeWebinar,
-  User,
+  Organizer,
   WebinarAPI,
+  ChangeDates,
 } from '@/domain/webinars';
 import {
   Body,
@@ -22,20 +23,21 @@ export class WebinarController {
   constructor(
     private readonly organizeWebinar: OrganizeWebinar,
     private readonly changeSeats: ChangeSeats,
+    private readonly changeDates: ChangeDates,
   ) {}
 
   @Post()
   async handleOrganizeWebinar(
     @Body(new ValidationPipe(WebinarAPI.OrganizeWebinar.schema))
     data: WebinarAPI.OrganizeWebinar.Request,
-    @Request() request: { user: User },
+    @Request() request: { organizerId: string },
   ): Promise<WebinarAPI.OrganizeWebinar.Response> {
     return this.organizeWebinar.execute({
       title: data.title,
       seats: data.seats,
       start: data.start,
       end: data.end,
-      organizerId: request.user.props.id,
+      organizer: new Organizer({ id: request.organizerId }),
     });
   }
 
@@ -45,12 +47,28 @@ export class WebinarController {
     @Param('id') webinarId: string,
     @Body(new ValidationPipe(WebinarAPI.ChangeSeats.schema))
     data: WebinarAPI.ChangeSeats.Request,
-    @Request() request: { user: User },
+    @Request() request: { organizerId: string },
   ): Promise<WebinarAPI.ChangeSeats.Response> {
     return this.changeSeats.execute({
       webinarId,
       seats: data.seats,
-      organizerId: request.user.props.id,
+      organizer: new Organizer({ id: request.organizerId }),
+    });
+  }
+
+  @Post('/:id/change-dates')
+  @HttpCode(200)
+  async handleChangeDates(
+    @Param('id') webinarId: string,
+    @Body(new ValidationPipe(WebinarAPI.ChangeDates.schema))
+    data: WebinarAPI.ChangeDates.Request,
+    @Request() request: { organizerId: string },
+  ): Promise<WebinarAPI.ChangeDates.Response> {
+    return this.changeDates.execute({
+      start: data.start,
+      end: data.end,
+      webinarId,
+      organizerId: request.organizerId,
     });
   }
 }

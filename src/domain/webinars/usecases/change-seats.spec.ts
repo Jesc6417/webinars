@@ -1,3 +1,4 @@
+import { Organizer } from './../entities';
 import { InMemoryWebinarRepository } from './../adapters';
 import { WebinarSeeds } from './../tests/webinar.seeds';
 import { ChangeSeats } from './change-seats';
@@ -22,7 +23,7 @@ describe('Feature: Changing number of seats', () => {
     const payload = {
       webinarId: 'id-1',
       seats: 200,
-      organizerId: 'alice',
+      organizer: new Organizer({ id: 'alice' }),
     };
 
     it('should updated the number of seats', async () => {
@@ -36,7 +37,7 @@ describe('Feature: Changing number of seats', () => {
   describe('Scenario: Webinar not found', () => {
     const payload = {
       seats: 200,
-      organizerId: 'alice',
+      organizer: new Organizer({ id: 'alice' }),
       webinarId: 'id-2',
     };
 
@@ -53,7 +54,7 @@ describe('Feature: Changing number of seats', () => {
     const payload = {
       webinarId: 'id-1',
       seats: 200,
-      organizerId: 'bob',
+      organizer: new Organizer({ id: 'bob' }),
     };
 
     it('should fail', async () => {
@@ -69,7 +70,7 @@ describe('Feature: Changing number of seats', () => {
     const payload = {
       webinarId: 'id-1',
       seats: 50,
-      organizerId: 'alice',
+      organizer: new Organizer({ id: 'alice' }),
     };
 
     it('should fail', async () => {
@@ -84,7 +85,7 @@ describe('Feature: Changing number of seats', () => {
   describe('Scenario: Seats cannot be updated to more than 1000 seats', () => {
     const payload = {
       webinarId: 'id-1',
-      organizerId: 'alice',
+      organizer: new Organizer({ id: 'alice' }),
       seats: 1001,
     };
 

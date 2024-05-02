@@ -1,7 +1,11 @@
+import { Organizer } from './../entities';
 import { WebinarSeeds } from './../tests/webinar.seeds';
-import { DateProvider, IdGenerator } from './../../core';
-import { FixedDateProvider } from '../../core/date/adapters/fixed-date.provider';
-import { FixedIdGenerator } from '../../core/id/adapters/fixed-id.generator';
+import {
+  DateProvider,
+  IdGenerator,
+  FixedDateProvider,
+  FixedIdGenerator,
+} from './../../core';
 import { InMemoryWebinarRepository } from './../adapters';
 import { OrganizeWebinar } from './organize-webinar';
 
@@ -23,17 +27,7 @@ describe('Feature: Organizing a webinar', () => {
     );
   });
 
-  const shouldNotCreateWebinarInDatabase = async (payload: {
-    start: Date;
-    end: Date;
-    title: string;
-    seats: number;
-    organizerId: string;
-  }) => {
-    try {
-      await organizeWebinar.execute(payload);
-    } catch (e) {}
-
+  const shouldNotCreateWebinarInDatabase = async () => {
     expect(inMemoryWebinarRepository.database.length).toBe(0);
   };
 
@@ -43,7 +37,7 @@ describe('Feature: Organizing a webinar', () => {
       seats: 100,
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizerId: 'alice',
+      organizer: new Organizer({ id: 'alice' }),
     };
 
     it('should return the webinars id', async () => {
@@ -64,7 +58,7 @@ describe('Feature: Organizing a webinar', () => {
     const payload = {
       title: 'My first webinar',
       seats: 100,
-      organizerId: 'alice',
+      organizer: new Organizer({ id: 'alice' }),
       start: new Date('2024-04-28T10:00:00.000Z'),
       end: new Date('2024-04-28T12:00:00.000Z'),
     };
@@ -76,7 +70,7 @@ describe('Feature: Organizing a webinar', () => {
     });
 
     it('should not create the webinar into the database', async () => {
-      await shouldNotCreateWebinarInDatabase(payload);
+      await shouldNotCreateWebinarInDatabase();
     });
   });
 
@@ -85,7 +79,7 @@ describe('Feature: Organizing a webinar', () => {
       title: 'My first webinar',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizerId: 'alice',
+      organizer: new Organizer({ id: 'alice' }),
       seats: 1001,
     };
 
@@ -96,7 +90,7 @@ describe('Feature: Organizing a webinar', () => {
     });
 
     it('should not create the webinar into the database', async () => {
-      await shouldNotCreateWebinarInDatabase(payload);
+      await shouldNotCreateWebinarInDatabase();
     });
   });
 
@@ -105,7 +99,7 @@ describe('Feature: Organizing a webinar', () => {
       title: 'My first webinar',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizerId: 'alice',
+      organizer: new Organizer({ id: 'alice' }),
       seats: 0,
     };
 
@@ -116,7 +110,7 @@ describe('Feature: Organizing a webinar', () => {
     });
 
     it('should not create the webinar into the database', async () => {
-      await shouldNotCreateWebinarInDatabase(payload);
+      await shouldNotCreateWebinarInDatabase();
     });
   });
 
@@ -125,7 +119,7 @@ describe('Feature: Organizing a webinar', () => {
       title: 'My first webinar',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T09:00:00.000Z'),
-      organizerId: 'alice',
+      organizer: new Organizer({ id: 'alice' }),
       seats: 100,
     };
 
@@ -136,7 +130,7 @@ describe('Feature: Organizing a webinar', () => {
     });
 
     it('should not create the webinar into the database', async () => {
-      await shouldNotCreateWebinarInDatabase(payload);
+      await shouldNotCreateWebinarInDatabase();
     });
   });
 });

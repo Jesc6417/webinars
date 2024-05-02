@@ -1,3 +1,4 @@
+import { Organizer } from './../entities';
 import { Entity } from './../../core';
 import { differenceInDays } from 'date-fns';
 
@@ -7,7 +8,7 @@ type WebinarProps = {
   seats: number;
   start: Date;
   end: Date;
-  organizerId: string;
+  organizer: Organizer;
 };
 
 export class Webinar extends Entity<WebinarProps> {
@@ -26,7 +27,7 @@ export class Webinar extends Entity<WebinarProps> {
   }
 
   isCreator(organizerId: string) {
-    return this.props.organizerId === organizerId;
+    return this.props.organizer.props.id === organizerId;
   }
 
   hasLessSeats(seats: number) {

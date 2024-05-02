@@ -1,4 +1,4 @@
-import { Webinar } from './../entities';
+import { Organizer, Webinar } from './../entities';
 
 export namespace WebinarSeeds {
   export const existingWebinar = new Webinar({
@@ -7,6 +7,6 @@ export namespace WebinarSeeds {
     seats: 100,
     start: new Date('2024-05-12T10:00:00.000Z'),
     end: new Date('2024-05-12T11:00:00.000Z'),
-    organizerId: 'alice',
+    organizer: new Organizer({ id: 'alice' }),
   });
 }

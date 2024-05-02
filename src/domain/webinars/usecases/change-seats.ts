@@ -1,7 +1,8 @@
+import { Organizer } from './../entities';
 import { Executable } from './../../core';
 import { WebinarRepository } from './../ports';
 
-type Request = { webinarId: string; seats: number; organizerId: string };
+type Request = { webinarId: string; seats: number; organizer: Organizer };
 type Response = void;
 
 export class ChangeSeats implements Executable<Request, Response> {
@@ -12,7 +13,7 @@ export class ChangeSeats implements Executable<Request, Response> {
 
     if (!webinar) throw new Error('Webinar not found.');
 
-    if (!webinar.isCreator(request.organizerId))
+    if (!webinar.isCreator(request.organizer.props.id))
       throw new Error('You are not allowed to modify this webinar.');
 
     if (webinar.hasLessSeats(request.seats))

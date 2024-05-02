@@ -1,10 +1,10 @@
-import { WebinarRepository } from '@/domain/webinars';
+import { Organizer, WebinarRepository } from '@/domain/webinars';
 import { addDays } from 'date-fns';
 import * as request from 'supertest';
 import { AppTest } from '../app-test';
 import { e2eUsers } from '../seeders/user.seeds';
 
-describe('Feature: Organizing a webinar', () => {
+fdescribe('Feature: Organizing a webinar', () => {
   let app: AppTest;
   let webinarRepository: WebinarRepository;
   const start = addDays(new Date(), 4);
@@ -29,7 +29,7 @@ describe('Feature: Organizing a webinar', () => {
   });
 
   describe('Scenario: Happy path', () => {
-    it('should create the webinar', async () => {
+    it('should succeed', async () => {
       const result = await request(app.getHttpServer())
         .post('/webinars')
         .set('Authorization', e2eUsers.johnDoe.createAuthorizationToken())
@@ -46,11 +46,12 @@ describe('Feature: Organizing a webinar', () => {
 
       expect(webinar).toBeDefined();
       expect(webinar!.props).toEqual({
-        ...payload,
         id: result.body.id,
+        title: 'My first webinar',
+        seats: 100,
         start,
         end,
-        organizerId: 'john-doe',
+        organizer: new Organizer({ id: 'john-doe' }),
       });
     });
   });

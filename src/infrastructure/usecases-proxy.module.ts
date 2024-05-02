@@ -6,11 +6,4 @@ import { Module } from '@nestjs/common';
   imports: [WebinarProxyModule, UserProxyModule],
   exports: [UserProxyModule, WebinarProxyModule],
 })
-export class UsecasesProxyModule {
-  static register() {
-    return {
-      module: UsecasesProxyModule,
-      providers: [],
-    };
-  }
-}
+export class UsecasesProxyModule {}

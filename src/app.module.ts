@@ -3,7 +3,7 @@ import { UsecasesProxyModule } from '@/infrastructure/usecases-proxy.module';
 import { Module } from '@nestjs/common';
 
 @Module({
-  imports: [UsecasesProxyModule.register()],
+  imports: [UsecasesProxyModule],
   controllers: [WebinarController, UserController],
   providers: [],
 })

@@ -1,4 +1,4 @@
-import { IdGenerator } from '../ports/id.generator';
+import { IdGenerator } from '../ports';
 
 export class FixedIdGenerator extends IdGenerator {
   generate() {

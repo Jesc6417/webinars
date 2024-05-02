@@ -57,7 +57,7 @@ describe('Feature: Cancel webinar', () => {
   describe('Scenario: Happy path', () => {
     const payload = {
       webinarId: WebinarSeeds.existingWebinar.props.id,
-      organizerId: WebinarSeeds.existingWebinar.props.organizer.props.id,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
     it('should cancel the webinar', async () => {
@@ -76,23 +76,20 @@ describe('Feature: Cancel webinar', () => {
       await cancelWebinar.execute(payload);
 
       expect(mailer.sentEmails.length).toBe(1);
-      expect(mailer.sentEmails[0].bcc).toEqual([
-        'participant-1@gmail.com',
-        'participant-2@gmail.com',
+      expect(mailer.sentEmails).toEqual([
+        {
+          bcc: ['participant-1@gmail.com', 'participant-2@gmail.com'],
+          subject: 'Webinar "My first webinar" canceled',
+          body: 'The webinar "My first webinar" has been canceled.',
+        },
       ]);
-      expect(mailer.sentEmails[0].subject).toBe(
-        'Webinar "My first webinar" canceled',
-      );
-      expect(mailer.sentEmails[0].body).toBe(
-        'The webinar "My first webinar" has been canceled.',
-      );
     });
   });
 
   describe('Scenario: Webinar not found', () => {
     const payload = {
       webinarId: 'id-2',
-      organizerId: WebinarSeeds.existingWebinar.props.organizer.props.id,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
     it('should fail', () => {
@@ -113,7 +110,7 @@ describe('Feature: Cancel webinar', () => {
   describe('Scenario: Delete webinar from someone else', () => {
     const payload = {
       webinarId: WebinarSeeds.existingWebinar.props.id,
-      organizerId: 'bob',
+      organizerId: WebinarSeeds.OrganizerBob.props.id,
     };
 
     it('should fail', () => {

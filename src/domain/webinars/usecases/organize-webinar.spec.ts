@@ -37,13 +37,13 @@ describe('Feature: Organizing a webinar', () => {
       seats: 100,
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizer: new Organizer({ id: 'alice' }),
+      organizer: WebinarSeeds.OrganizerAlice,
     };
 
     it('should return the webinars id', async () => {
       const response = await organizeWebinar.execute(payload);
 
-      expect(response).toEqual({ id: expect.any(String) });
+      expect(response).toEqual({ id: WebinarSeeds.existingWebinar.props.id });
     });
 
     it('should insert the webinar into the databaes', async () => {
@@ -58,7 +58,7 @@ describe('Feature: Organizing a webinar', () => {
     const payload = {
       title: 'My first webinar',
       seats: 100,
-      organizer: new Organizer({ id: 'alice' }),
+      organizer: WebinarSeeds.OrganizerAlice,
       start: new Date('2024-04-28T10:00:00.000Z'),
       end: new Date('2024-04-28T12:00:00.000Z'),
     };
@@ -79,7 +79,7 @@ describe('Feature: Organizing a webinar', () => {
       title: 'My first webinar',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizer: new Organizer({ id: 'alice' }),
+      organizer: WebinarSeeds.OrganizerAlice,
       seats: 1001,
     };
 
@@ -99,7 +99,7 @@ describe('Feature: Organizing a webinar', () => {
       title: 'My first webinar',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizer: new Organizer({ id: 'alice' }),
+      organizer: WebinarSeeds.OrganizerAlice,
       seats: 0,
     };
 
@@ -119,7 +119,7 @@ describe('Feature: Organizing a webinar', () => {
       title: 'My first webinar',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T09:00:00.000Z'),
-      organizer: new Organizer({ id: 'alice' }),
+      organizer: WebinarSeeds.OrganizerAlice,
       seats: 100,
     };
 

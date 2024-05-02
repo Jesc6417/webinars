@@ -1,5 +1,6 @@
 import { DateProvider, IdGenerator, Mailer } from '@/domain/core';
 import {
+  CancelWebinar,
   ChangeDates,
   ChangeSeats,
   OrganizeWebinar,
@@ -54,7 +55,30 @@ import { RepositoriesModule } from './repositories.module';
         Mailer,
       ],
     },
+    {
+      provide: CancelWebinar,
+      useFactory: (
+        webinarRepository: WebinarRepository,
+        participationRepository: ParticipationRepository,
+        participantRepository: ParticipantRepository,
+        dateGenerator: DateProvider,
+        mailer: Mailer,
+      ) =>
+        new CancelWebinar(
+          webinarRepository,
+          participationRepository,
+          participantRepository,
+          mailer,
+        ),
+      inject: [
+        WebinarRepository,
+        ParticipationRepository,
+        ParticipantRepository,
+        DateProvider,
+        Mailer,
+      ],
+    },
   ],
-  exports: [OrganizeWebinar, ChangeSeats, ChangeDates],
+  exports: [OrganizeWebinar, ChangeSeats, ChangeDates, CancelWebinar],
 })
 export class WebinarProxyModule {}

@@ -10,6 +10,9 @@ export namespace WebinarSeeds {
     organizer: new Organizer({ id: 'alice' }),
   });
 
+  export const OrganizerAlice = new Organizer({ id: 'alice' });
+  export const OrganizerBob = new Organizer({ id: 'bob' });
+
   export const existingParticipation = [
     new Participation({
       webinarId: existingWebinar.props.id,

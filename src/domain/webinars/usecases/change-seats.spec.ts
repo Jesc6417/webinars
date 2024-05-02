@@ -8,7 +8,9 @@ describe('Feature: Changing number of seats', () => {
   let changeSeats: ChangeSeats;
 
   function shouldNotUpdateSeats() {
-    const webinar = inMemoryWebinarRepository.findByIdSync('id-1');
+    const webinar = inMemoryWebinarRepository.findByIdSync(
+      WebinarSeeds.existingWebinar.props.id,
+    );
     expect(webinar!.props.seats).toBe(100);
   }
 
@@ -21,15 +23,17 @@ describe('Feature: Changing number of seats', () => {
 
   describe('Scenario: Happy path', () => {
     const payload = {
-      webinarId: 'id-1',
+      webinarId: WebinarSeeds.existingWebinar.props.id,
       seats: 200,
-      organizer: new Organizer({ id: 'alice' }),
+      organizer: WebinarSeeds.OrganizerAlice,
     };
 
     it('should updated the number of seats', async () => {
       await changeSeats.execute(payload);
 
-      const webinar = await inMemoryWebinarRepository.findById('id-1');
+      const webinar = await inMemoryWebinarRepository.findById(
+        WebinarSeeds.existingWebinar.props.id,
+      );
       expect(webinar!.props.seats).toBe(200);
     });
   });
@@ -37,7 +41,7 @@ describe('Feature: Changing number of seats', () => {
   describe('Scenario: Webinar not found', () => {
     const payload = {
       seats: 200,
-      organizer: new Organizer({ id: 'alice' }),
+      organizer: WebinarSeeds.OrganizerAlice,
       webinarId: 'id-2',
     };
 
@@ -52,9 +56,9 @@ describe('Feature: Changing number of seats', () => {
 
   describe('Scenario: Webinar can only be modified by the creator', () => {
     const payload = {
-      webinarId: 'id-1',
+      webinarId: WebinarSeeds.existingWebinar.props.id,
       seats: 200,
-      organizer: new Organizer({ id: 'bob' }),
+      organizer: WebinarSeeds.OrganizerBob,
     };
 
     it('should fail', async () => {
@@ -68,9 +72,9 @@ describe('Feature: Changing number of seats', () => {
 
   describe('Scenario: Seats cannot be reduced', () => {
     const payload = {
-      webinarId: 'id-1',
+      webinarId: WebinarSeeds.existingWebinar.props.id,
       seats: 50,
-      organizer: new Organizer({ id: 'alice' }),
+      organizer: WebinarSeeds.OrganizerAlice,
     };
 
     it('should fail', async () => {
@@ -84,8 +88,8 @@ describe('Feature: Changing number of seats', () => {
 
   describe('Scenario: Seats cannot be updated to more than 1000 seats', () => {
     const payload = {
-      webinarId: 'id-1',
-      organizer: new Organizer({ id: 'alice' }),
+      webinarId: WebinarSeeds.existingWebinar.props.id,
+      organizer: WebinarSeeds.OrganizerAlice,
       seats: 1001,
     };
 

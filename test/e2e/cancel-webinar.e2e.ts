@@ -1,12 +1,10 @@
-import * as request from 'supertest';
 import { AppTest } from '../app-test';
+import * as request from 'supertest';
 import { e2eUsers } from '../seeders/user.seeds';
 import { e2eWebinars } from '../seeders/webinar.seeds';
 
-describe('Feature: Changing number of seats', () => {
+describe('Feature: Cancelling webinar', () => {
   let app: AppTest;
-  const seats = 150;
-  const id = 'id-1';
 
   beforeEach(async () => {
     app = new AppTest();
@@ -14,34 +12,25 @@ describe('Feature: Changing number of seats', () => {
     await app.loadFixtures([e2eUsers.johnDoe, e2eWebinars.sampleWebinar]);
   });
 
-  afterEach(async () => {
-    await app.cleanup();
-  });
-
   describe('Scenario: Happy path', () => {
-    it('should succeed', async () => {
+    it('should succedd', async () => {
       const result = await request(app.getHttpServer())
-        .post(`/webinars/${id}/change-seats`)
+        .delete(`/webinars/${e2eWebinars.sampleWebinar.entity.props.id}`)
         .set('Authorization', e2eUsers.johnDoe.createAuthorizationToken())
-        .send({
-          seats,
-        });
+        .send();
 
       expect(result.status).toBe(200);
 
       const webinar = await e2eWebinars.sampleWebinar.getById(app);
-
-      expect(webinar!.props.seats).toEqual(seats);
+      expect(webinar).toBeNull();
     });
   });
 
   describe('Scenario: the user is not authenticated', () => {
-    it('should reject', async () => {
+    it('should fail', async () => {
       const result = await request(app.getHttpServer())
-        .post(`/webinars/${id}/change-seats`)
-        .send({
-          seats,
-        });
+        .delete(`/webinars/${e2eWebinars.sampleWebinar.entity.props.id}`)
+        .send();
 
       expect(result.status).toBe(403);
     });

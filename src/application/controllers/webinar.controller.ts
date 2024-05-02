@@ -5,6 +5,7 @@ import {
   Organizer,
   WebinarAPI,
   ChangeDates,
+  CancelWebinar,
 } from '@/domain/webinars';
 import {
   Body,
@@ -14,6 +15,7 @@ import {
   Request,
   Param,
   HttpCode,
+  Delete,
 } from '@nestjs/common';
 import { ValidationPipe } from './../pipes/validation.pipe';
 
@@ -24,6 +26,7 @@ export class WebinarController {
     private readonly organizeWebinar: OrganizeWebinar,
     private readonly changeSeats: ChangeSeats,
     private readonly changeDates: ChangeDates,
+    private readonly cancelWebinar: CancelWebinar,
   ) {}
 
   @Post()
@@ -67,6 +70,17 @@ export class WebinarController {
     return this.changeDates.execute({
       start: data.start,
       end: data.end,
+      webinarId,
+      organizerId: request.organizerId,
+    });
+  }
+
+  @Delete('/:id')
+  async handleCancelWebinar(
+    @Param('id') webinarId: string,
+    @Request() request: { organizerId: string },
+  ) {
+    return this.cancelWebinar.execute({
       webinarId,
       organizerId: request.organizerId,
     });

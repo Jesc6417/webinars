@@ -4,7 +4,7 @@ import { AppTest } from '../app-test';
 import { e2eUsers } from '../seeders/user.seeds';
 import { e2eWebinars } from '../seeders/webinar.seeds';
 
-describe('Feature: Change dates', () => {
+describe('Feature: Changing the dates', () => {
   let app: AppTest;
 
   beforeEach(async () => {

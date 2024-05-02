@@ -40,15 +40,19 @@ describe('Feature: Change webinars dates', () => {
   });
 
   describe('Scenario: Happy path', () => {
-    it('should change the dates of the webinar', async () => {
-      await useCase.execute({
-        webinarId: 'id-1',
-        start: new Date('2024-05-12T10:00:00.000Z'),
-        end: new Date('2024-05-12T11:00:00.000Z'),
-        organizerId: 'alice',
-      });
+    const payload = {
+      webinarId: WebinarSeeds.existingWebinar.props.id,
+      start: new Date('2024-05-12T10:00:00.000Z'),
+      end: new Date('2024-05-12T11:00:00.000Z'),
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
+    };
 
-      const webinar = await webinarRepository.findById('id-1');
+    it('should change the dates of the webinar', async () => {
+      await useCase.execute(payload);
+
+      const webinar = await webinarRepository.findById(
+        WebinarSeeds.existingWebinar.props.id,
+      );
       expect(webinar!.props.start).toEqual(
         new Date('2024-05-12T10:00:00.000Z'),
       );
@@ -62,29 +66,23 @@ describe('Feature: Change webinars dates', () => {
 
       participantRepository.database.push(...WebinarSeeds.existingParticipant);
 
-      await useCase.execute({
-        webinarId: WebinarSeeds.existingWebinar.props.id,
-        start: new Date('2024-05-12T10:00:00.000Z'),
-        end: new Date('2024-05-12T11:00:00.000Z'),
-        organizerId: 'alice',
-      });
+      await useCase.execute(payload);
 
       expect(mailer.sentEmails).toHaveLength(1);
-      expect(mailer.sentEmails[0].bcc).toEqual([
-        'participant-1@gmail.com',
-        'participant-2@gmail.com',
+      expect(mailer.sentEmails).toEqual([
+        {
+          bcc: ['participant-1@gmail.com', 'participant-2@gmail.com'],
+          subject: 'Webinar dates changed',
+          body: 'The webinar "My first webinar" has new dates: 12/05/2024 12:00 - 12/05/2024 13:00.',
+        },
       ]);
-      expect(mailer.sentEmails[0].subject).toEqual('Webinar dates changed');
-      expect(mailer.sentEmails[0].body).toEqual(
-        'The webinar "My first webinar" has new dates: 12/05/2024 12:00 - 12/05/2024 13:00.',
-      );
     });
 
     it('should change the start of the webinar', async () => {
       await useCase.execute({
-        webinarId: 'id-1',
+        webinarId: WebinarSeeds.existingWebinar.props.id,
         start: new Date('2024-05-12T08:00:00.000Z'),
-        organizerId: 'alice',
+        organizerId: WebinarSeeds.OrganizerAlice.props.id,
       });
 
       const webinar = await webinarRepository.findById('id-1');
@@ -96,9 +94,9 @@ describe('Feature: Change webinars dates', () => {
 
     it('should change the end of the webinar', async () => {
       await useCase.execute({
-        webinarId: 'id-1',
+        webinarId: WebinarSeeds.existingWebinar.props.id,
         end: new Date('2024-05-12T12:00:00.000Z'),
-        organizerId: 'alice',
+        organizerId: WebinarSeeds.OrganizerAlice.props.id,
       });
 
       const webinar = await webinarRepository.findById('id-1');
@@ -114,7 +112,7 @@ describe('Feature: Change webinars dates', () => {
       webinarId: 'id-2',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizerId: 'alice',
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
     it('should fail', async () => {
@@ -128,10 +126,10 @@ describe('Feature: Change webinars dates', () => {
 
   describe('Scenario: Webinar can only be modified by the creator', () => {
     const payload = {
-      webinarId: 'id-1',
+      webinarId: WebinarSeeds.existingWebinar.props.id,
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizerId: 'bob',
+      organizerId: WebinarSeeds.OrganizerBob.props.id,
     };
 
     it('should fail', async () => {
@@ -145,10 +143,10 @@ describe('Feature: Change webinars dates', () => {
 
   describe('Scenario: Webinar cannot happens too soon', () => {
     const payload = {
-      webinarId: 'id-1',
+      webinarId: WebinarSeeds.existingWebinar.props.id,
       start: new Date('2024-04-28T10:00:00.000Z'),
       end: new Date('2024-04-28T12:00:00.000Z'),
-      organizerId: 'alice',
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
     it('should fail', async () => {
@@ -162,10 +160,10 @@ describe('Feature: Change webinars dates', () => {
 
   describe('Scenario: Webinar cannot end before it start', () => {
     const payload = {
-      webinarId: 'id-1',
+      webinarId: WebinarSeeds.existingWebinar.props.id,
       start: new Date('2024-05-28T12:00:00.000Z'),
       end: new Date('2024-05-28T10:00:00.000Z'),
-      organizerId: 'alice',
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
     it('should fail', async () => {

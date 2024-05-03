@@ -79,7 +79,7 @@ export class WebinarController {
   async handleCancelWebinar(
     @Param('id') webinarId: string,
     @Request() request: { organizerId: string },
-  ) {
+  ): Promise<WebinarAPI.CancelWebinar.Response> {
     return this.cancelWebinar.execute({
       webinarId,
       organizerId: request.organizerId,

@@ -61,10 +61,10 @@ describe('Feature: Change webinars dates', () => {
 
     it('should send an email to the participants', async () => {
       participationRepository.database.push(
-        ...WebinarSeeds.existingParticipation,
+        ...WebinarSeeds.existingParticipations,
       );
 
-      participantRepository.database.push(...WebinarSeeds.existingParticipant);
+      participantRepository.database.push(...WebinarSeeds.existingParticipants);
 
       await useCase.execute(payload);
 
@@ -115,8 +115,8 @@ describe('Feature: Change webinars dates', () => {
       organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
-    it('should fail', async () => {
-      expect(async () => await useCase.execute(payload)).rejects.toThrow(
+    it('should fail', () => {
+      expect(() => useCase.execute(payload)).rejects.toThrow(
         'Webinar not found.',
       );
 
@@ -132,8 +132,8 @@ describe('Feature: Change webinars dates', () => {
       organizerId: WebinarSeeds.OrganizerBob.props.id,
     };
 
-    it('should fail', async () => {
-      expect(async () => await useCase.execute(payload)).rejects.toThrow(
+    it('should fail', () => {
+      expect(() => useCase.execute(payload)).rejects.toThrow(
         'You are not allowed to modify this webinar.',
       );
 
@@ -149,8 +149,8 @@ describe('Feature: Change webinars dates', () => {
       organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
-    it('should fail', async () => {
-      expect(async () => await useCase.execute(payload)).rejects.toThrow(
+    it('should fail', () => {
+      expect(() => useCase.execute(payload)).rejects.toThrow(
         'Webinar must happen in at least 3 days.',
       );
 
@@ -166,8 +166,8 @@ describe('Feature: Change webinars dates', () => {
       organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
-    it('should fail', async () => {
-      expect(async () => await useCase.execute(payload)).rejects.toThrow(
+    it('should fail', () => {
+      expect(() => useCase.execute(payload)).rejects.toThrow(
         'Webinar cannot end before it starts.',
       );
 

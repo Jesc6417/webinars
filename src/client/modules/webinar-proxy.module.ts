@@ -3,11 +3,14 @@ import {
   CancelWebinar,
   ChangeDates,
   ChangeSeats,
+  OrganizerRepository,
   OrganizeWebinar,
   ParticipantRepository,
   ParticipationRepository,
+  ReserveSeat,
   WebinarRepository,
 } from '@/domain/webinars';
+import { CancelSeat } from '@/domain/webinars/usecases/cancel-seat';
 import { ProvidersModule } from './providers.module';
 import { ToolsModule } from './tools.module';
 import { Module } from '@nestjs/common';
@@ -61,7 +64,6 @@ import { RepositoriesModule } from './repositories.module';
         webinarRepository: WebinarRepository,
         participationRepository: ParticipationRepository,
         participantRepository: ParticipantRepository,
-        dateGenerator: DateProvider,
         mailer: Mailer,
       ) =>
         new CancelWebinar(
@@ -74,11 +76,65 @@ import { RepositoriesModule } from './repositories.module';
         WebinarRepository,
         ParticipationRepository,
         ParticipantRepository,
-        DateProvider,
         Mailer,
       ],
     },
+    {
+      provide: ReserveSeat,
+      inject: [
+        ParticipationRepository,
+        WebinarRepository,
+        ParticipantRepository,
+        OrganizerRepository,
+        Mailer,
+      ],
+      useFactory: (
+        participationRepository,
+        webinarRepository,
+        participantRepository,
+        organizerRepository,
+        mailer,
+      ) =>
+        new ReserveSeat(
+          participationRepository,
+          webinarRepository,
+          participantRepository,
+          organizerRepository,
+          mailer,
+        ),
+    },
+    {
+      provide: CancelSeat,
+      inject: [
+        ParticipationRepository,
+        ParticipantRepository,
+        WebinarRepository,
+        OrganizerRepository,
+        Mailer,
+      ],
+      useFactory: (
+        participationRepository,
+        participantRepository,
+        webinarRepository,
+        organizerRepository,
+        mailer,
+      ) =>
+        new CancelSeat(
+          participationRepository,
+          participantRepository,
+          webinarRepository,
+          organizerRepository,
+          mailer,
+        ),
+    },
   ],
-  exports: [OrganizeWebinar, ChangeSeats, ChangeDates, CancelWebinar],
+  exports: [
+    OrganizeWebinar,
+    ChangeSeats,
+    ChangeDates,
+    CancelWebinar,
+    ReserveSeat,
+    CancelSeat,
+  ],
 })
 export class WebinarProxyModule {}

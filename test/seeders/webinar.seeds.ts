@@ -9,12 +9,12 @@ const end = addDays(new Date(), 5);
 export const e2eWebinars = {
   sampleWebinar: new WebinarFixture(
     new Webinar({
-      id: 'id-1',
+      id: 'id-webinar-1',
       title: 'Sample Webinar',
       start,
       end,
       seats: 100,
-      organizer: e2eUsers.johnDoe.entity,
+      organizerId: e2eUsers.johnDoe.entity.props.id,
     }),
   ),
 };

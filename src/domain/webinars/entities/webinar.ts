@@ -8,7 +8,7 @@ type WebinarProps = {
   seats: number;
   start: Date;
   end: Date;
-  organizer: Organizer;
+  organizerId: string;
 };
 
 export class Webinar extends Entity<WebinarProps> {
@@ -27,7 +27,7 @@ export class Webinar extends Entity<WebinarProps> {
   }
 
   isOrganizer(organizerId: string) {
-    return this.props.organizer.props.id === organizerId;
+    return this.props.organizerId === organizerId;
   }
 
   hasLessSeats(seats: number) {
@@ -36,5 +36,9 @@ export class Webinar extends Entity<WebinarProps> {
 
   endsBeforeStart() {
     return this.props.end < this.props.start;
+  }
+
+  hasNotEnoughSeats(participants: number) {
+    return this.props.seats === participants;
   }
 }

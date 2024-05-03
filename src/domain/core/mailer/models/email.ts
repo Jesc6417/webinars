@@ -1,5 +1,6 @@
 export type Email = {
-  bcc: string[];
+  to?: string;
+  bcc?: string[];
   subject: string;
   body: string;
 };

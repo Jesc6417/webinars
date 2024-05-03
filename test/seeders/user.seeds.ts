@@ -6,7 +6,7 @@ export const e2eUsers = {
     new User({
       email: 'john-doe@gmail.com',
       token: 'am9obi1kb2VAZ21haWwuY29tOmF6ZXJ0eQ==',
-      id: 'john-doe',
+      id: 'id-user-1',
     }),
   ),
 };

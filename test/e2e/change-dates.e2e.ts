@@ -1,14 +1,14 @@
+import { Webinar } from '@/domain/webinars';
 import { addDays } from 'date-fns';
 import * as request from 'supertest';
 import { AppTest } from '../app-test';
-import { e2eUsers } from '../seeders/user.seeds';
-import { e2eWebinars } from '../seeders/webinar.seeds';
+import { e2eUsers, e2eWebinars } from '../seeders';
 
 describe('Feature: Changing the dates', () => {
-  let app: AppTest;
+  let app: AppTest<Webinar>;
 
   beforeEach(async () => {
-    app = new AppTest();
+    app = new AppTest(Webinar);
     await app.setup();
     await app.loadFixtures([e2eUsers.johnDoe, e2eWebinars.sampleWebinar]);
   });
@@ -23,7 +23,7 @@ describe('Feature: Changing the dates', () => {
       const end = addDays(new Date(), 9);
       const result = await request(app.getHttpServer())
         .post(
-          `/webinars/${e2eWebinars.sampleWebinar.entity.props.id}/change-dates`,
+          `${app.path}/${e2eWebinars.sampleWebinar.entity.props.id}/change-dates`,
         )
         .set('Authorization', e2eUsers.johnDoe.createAuthorizationToken())
         .send({
@@ -44,7 +44,7 @@ describe('Feature: Changing the dates', () => {
     it('should reject', async () => {
       const result = await request(app.getHttpServer())
         .post(
-          `/webinars/${e2eWebinars.sampleWebinar.entity.props.id}/change-dates`,
+          `${app.path}/${e2eWebinars.sampleWebinar.entity.props.id}/change-dates`,
         )
         .send({
           start: addDays(new Date(), 8),

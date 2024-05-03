@@ -1,11 +1,11 @@
-import { Organizer, WebinarRepository } from '@/domain/webinars';
+import { Webinar, WebinarRepository } from '@/domain/webinars';
 import { addDays } from 'date-fns';
 import * as request from 'supertest';
 import { AppTest } from '../app-test';
 import { e2eUsers } from '../seeders/user.seeds';
 
-fdescribe('Feature: Organizing a webinar', () => {
-  let app: AppTest;
+describe('Feature: Organizing a webinar', () => {
+  let app: AppTest<Webinar>;
   let webinarRepository: WebinarRepository;
   const start = addDays(new Date(), 4);
   const end = addDays(new Date(), 5);
@@ -17,7 +17,7 @@ fdescribe('Feature: Organizing a webinar', () => {
   };
 
   beforeEach(async () => {
-    app = new AppTest();
+    app = new AppTest(Webinar);
     await app.setup();
     await app.loadFixtures([e2eUsers.johnDoe]);
 
@@ -31,7 +31,7 @@ fdescribe('Feature: Organizing a webinar', () => {
   describe('Scenario: Happy path', () => {
     it('should succeed', async () => {
       const result = await request(app.getHttpServer())
-        .post('/webinars')
+        .post(app.path)
         .set('Authorization', e2eUsers.johnDoe.createAuthorizationToken())
         .send({
           ...payload,
@@ -51,7 +51,7 @@ fdescribe('Feature: Organizing a webinar', () => {
         seats: 100,
         start,
         end,
-        organizer: new Organizer({ id: 'john-doe' }),
+        organizerId: 'id-user-1',
       });
     });
   });
@@ -59,7 +59,7 @@ fdescribe('Feature: Organizing a webinar', () => {
   describe('Scenario: the user is not authenticated', () => {
     it('should reject', async () => {
       const result = await request(app.getHttpServer())
-        .post('/webinars')
+        .post(app.path)
         .send({
           ...payload,
           end: end.toISOString(),

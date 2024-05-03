@@ -1,19 +1,19 @@
+import { WebinarRepository } from '../ports';
+import { DateProvider, Executable, IdGenerator } from './../../core';
+import { Webinar } from './../entities';
 import {
   WebinarCannotEndBeforeStartsException,
   WebinarNotEnoughSeatException,
   WebinarTooEarlyException,
   WebinarTooManySeatsException,
 } from './../exceptions';
-import { WebinarRepository } from '../ports';
-import { DateProvider, Executable, IdGenerator } from './../../core';
-import { Organizer, Webinar } from './../entities';
 
 type Request = {
   start: Date;
   end: Date;
   title: string;
   seats: number;
-  organizer: Organizer;
+  organizerId: string;
 };
 
 type Response = {
@@ -35,7 +35,7 @@ export class OrganizeWebinar implements Executable<Request, Response> {
       seats: request.seats,
       start: request.start,
       end: request.end,
-      organizer: request.organizer,
+      organizerId: request.organizerId,
     });
 
     if (webinar.isTooSoon(this.dateGenerator.now()))

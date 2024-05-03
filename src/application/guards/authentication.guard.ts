@@ -15,7 +15,7 @@ export class AuthenticationGuard implements CanActivate {
     const token = extractToken(header);
 
     const user = await this.validateUserToken.execute(token);
-    request.organizerId = user.props.id;
+    request.userId = user.props.id;
 
     return Promise.resolve(!!user);
   }

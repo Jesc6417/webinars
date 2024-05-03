@@ -6,3 +6,7 @@ export * from './webinar-cannot-end-before-starts.exception';
 export * from './webinar-not-enough-seat.exception';
 export * from './webinar-cannot-reduce-number-of-seats.exception';
 export * from './webinar-delete-forbidden.exception';
+export * from './webinar-no-more-seats-available.exception';
+export * from './participant-already-registered.exception';
+export * from './participant-not-found.exception';
+export * from './participation-not-found.exception';

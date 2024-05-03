@@ -25,7 +25,7 @@ describe('Feature: Changing number of seats', () => {
     const payload = {
       webinarId: WebinarSeeds.existingWebinar.props.id,
       seats: 200,
-      organizer: WebinarSeeds.OrganizerAlice,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
     it('should updated the number of seats', async () => {
@@ -41,12 +41,12 @@ describe('Feature: Changing number of seats', () => {
   describe('Scenario: Webinar not found', () => {
     const payload = {
       seats: 200,
-      organizer: WebinarSeeds.OrganizerAlice,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
       webinarId: 'id-2',
     };
 
-    it('should fail', async () => {
-      expect(async () => await changeSeats.execute(payload)).rejects.toThrow(
+    it('should fail', () => {
+      expect(() => changeSeats.execute(payload)).rejects.toThrow(
         'Webinar not found.',
       );
 
@@ -58,11 +58,11 @@ describe('Feature: Changing number of seats', () => {
     const payload = {
       webinarId: WebinarSeeds.existingWebinar.props.id,
       seats: 200,
-      organizer: WebinarSeeds.OrganizerBob,
+      organizerId: WebinarSeeds.OrganizerBob.props.id,
     };
 
-    it('should fail', async () => {
-      expect(async () => await changeSeats.execute(payload)).rejects.toThrow(
+    it('should fail', () => {
+      expect(() => changeSeats.execute(payload)).rejects.toThrow(
         'You are not allowed to modify this webinar.',
       );
 
@@ -74,11 +74,11 @@ describe('Feature: Changing number of seats', () => {
     const payload = {
       webinarId: WebinarSeeds.existingWebinar.props.id,
       seats: 50,
-      organizer: WebinarSeeds.OrganizerAlice,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
-    it('should fail', async () => {
-      expect(async () => await changeSeats.execute(payload)).rejects.toThrow(
+    it('should fail', () => {
+      expect(() => changeSeats.execute(payload)).rejects.toThrow(
         'You cannot reduce number of seats.',
       );
 
@@ -89,12 +89,12 @@ describe('Feature: Changing number of seats', () => {
   describe('Scenario: Seats cannot be updated to more than 1000 seats', () => {
     const payload = {
       webinarId: WebinarSeeds.existingWebinar.props.id,
-      organizer: WebinarSeeds.OrganizerAlice,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
       seats: 1001,
     };
 
-    it('should fail', async () => {
-      expect(async () => await changeSeats.execute(payload)).rejects.toThrow(
+    it('should fail', () => {
+      expect(() => changeSeats.execute(payload)).rejects.toThrow(
         'Webinar must have a maximum of 1000 seats.',
       );
 

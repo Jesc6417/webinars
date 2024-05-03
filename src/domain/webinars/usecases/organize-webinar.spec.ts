@@ -37,7 +37,7 @@ describe('Feature: Organizing a webinar', () => {
       seats: 100,
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizer: WebinarSeeds.OrganizerAlice,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
     };
 
     it('should return the webinars id', async () => {
@@ -58,15 +58,15 @@ describe('Feature: Organizing a webinar', () => {
     const payload = {
       title: 'My first webinar',
       seats: 100,
-      organizer: WebinarSeeds.OrganizerAlice,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
       start: new Date('2024-04-28T10:00:00.000Z'),
       end: new Date('2024-04-28T12:00:00.000Z'),
     };
 
-    it('should fail', async () => {
-      expect(
-        async () => await organizeWebinar.execute(payload),
-      ).rejects.toThrow('Webinar must happen in at least 3 days.');
+    it('should fail', () => {
+      expect(() => organizeWebinar.execute(payload)).rejects.toThrow(
+        'Webinar must happen in at least 3 days.',
+      );
     });
 
     it('should not create the webinar into the database', async () => {
@@ -79,14 +79,14 @@ describe('Feature: Organizing a webinar', () => {
       title: 'My first webinar',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizer: WebinarSeeds.OrganizerAlice,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
       seats: 1001,
     };
 
-    it('should fail', async () => {
-      expect(
-        async () => await organizeWebinar.execute(payload),
-      ).rejects.toThrow('Webinar must have a maximum of 1000 seats.');
+    it('should fail', () => {
+      expect(() => organizeWebinar.execute(payload)).rejects.toThrow(
+        'Webinar must have a maximum of 1000 seats.',
+      );
     });
 
     it('should not create the webinar into the database', async () => {
@@ -99,14 +99,14 @@ describe('Feature: Organizing a webinar', () => {
       title: 'My first webinar',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T11:00:00.000Z'),
-      organizer: WebinarSeeds.OrganizerAlice,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
       seats: 0,
     };
 
-    it('should fail', async () => {
-      expect(
-        async () => await organizeWebinar.execute(payload),
-      ).rejects.toThrow('Webinar must have at least 1 seat.');
+    it('should fail', () => {
+      expect(() => organizeWebinar.execute(payload)).rejects.toThrow(
+        'Webinar must have at least 1 seat.',
+      );
     });
 
     it('should not create the webinar into the database', async () => {
@@ -119,14 +119,14 @@ describe('Feature: Organizing a webinar', () => {
       title: 'My first webinar',
       start: new Date('2024-05-12T10:00:00.000Z'),
       end: new Date('2024-05-12T09:00:00.000Z'),
-      organizer: WebinarSeeds.OrganizerAlice,
+      organizerId: WebinarSeeds.OrganizerAlice.props.id,
       seats: 100,
     };
 
-    it('should fail', async () => {
-      expect(
-        async () => await organizeWebinar.execute(payload),
-      ).rejects.toThrow('Webinar cannot end before it starts.');
+    it('should fail', () => {
+      expect(() => organizeWebinar.execute(payload)).rejects.toThrow(
+        'Webinar cannot end before it starts.',
+      );
     });
 
     it('should not create the webinar into the database', async () => {

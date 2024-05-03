@@ -49,9 +49,9 @@ describe('Feature: Cancel webinar', () => {
 
     webinarRepository.database.push(WebinarSeeds.existingWebinar);
     participationRepository.database.push(
-      ...WebinarSeeds.existingParticipation,
+      ...WebinarSeeds.existingParticipations,
     );
-    participantRepository.database.push(...WebinarSeeds.existingParticipant);
+    participantRepository.database.push(...WebinarSeeds.existingParticipants);
   });
 
   describe('Scenario: Happy path', () => {
@@ -93,7 +93,7 @@ describe('Feature: Cancel webinar', () => {
     };
 
     it('should fail', () => {
-      expect(async () => await cancelWebinar.execute(payload)).rejects.toThrow(
+      expect(() => cancelWebinar.execute(payload)).rejects.toThrow(
         'Webinar not found.',
       );
     });
@@ -114,7 +114,7 @@ describe('Feature: Cancel webinar', () => {
     };
 
     it('should fail', () => {
-      expect(async () => await cancelWebinar.execute(payload)).rejects.toThrow(
+      expect(() => cancelWebinar.execute(payload)).rejects.toThrow(
         'You are not allowed to delete this webinar.',
       );
     });

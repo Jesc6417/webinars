@@ -1,22 +1,21 @@
-import { AuthenticationGuard } from './../guards';
 import {
+  CancelWebinar,
+  ChangeDates,
   ChangeSeats,
   OrganizeWebinar,
-  Organizer,
   WebinarAPI,
-  ChangeDates,
-  CancelWebinar,
 } from '@/domain/webinars';
 import {
   Body,
   Controller,
-  Post,
-  UseGuards,
-  Request,
-  Param,
-  HttpCode,
   Delete,
+  HttpCode,
+  Param,
+  Post,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthenticationGuard } from './../guards';
 import { ValidationPipe } from './../pipes/validation.pipe';
 
 @Controller('/webinars')
@@ -33,14 +32,14 @@ export class WebinarController {
   async handleOrganizeWebinar(
     @Body(new ValidationPipe(WebinarAPI.OrganizeWebinar.schema))
     data: WebinarAPI.OrganizeWebinar.Request,
-    @Request() request: { organizerId: string },
+    @Request() request: { userId: string },
   ): Promise<WebinarAPI.OrganizeWebinar.Response> {
     return this.organizeWebinar.execute({
       title: data.title,
       seats: data.seats,
       start: data.start,
       end: data.end,
-      organizer: new Organizer({ id: request.organizerId }),
+      organizerId: request.userId,
     });
   }
 
@@ -50,12 +49,12 @@ export class WebinarController {
     @Param('id') webinarId: string,
     @Body(new ValidationPipe(WebinarAPI.ChangeSeats.schema))
     data: WebinarAPI.ChangeSeats.Request,
-    @Request() request: { organizerId: string },
+    @Request() request: { userId: string },
   ): Promise<WebinarAPI.ChangeSeats.Response> {
     return this.changeSeats.execute({
       webinarId,
       seats: data.seats,
-      organizer: new Organizer({ id: request.organizerId }),
+      organizerId: request.userId,
     });
   }
 
@@ -65,24 +64,24 @@ export class WebinarController {
     @Param('id') webinarId: string,
     @Body(new ValidationPipe(WebinarAPI.ChangeDates.schema))
     data: WebinarAPI.ChangeDates.Request,
-    @Request() request: { organizerId: string },
+    @Request() request: { userId: string },
   ): Promise<WebinarAPI.ChangeDates.Response> {
     return this.changeDates.execute({
       start: data.start,
       end: data.end,
       webinarId,
-      organizerId: request.organizerId,
+      organizerId: request.userId,
     });
   }
 
   @Delete('/:id')
   async handleCancelWebinar(
     @Param('id') webinarId: string,
-    @Request() request: { organizerId: string },
+    @Request() request: { userId: string },
   ): Promise<WebinarAPI.CancelWebinar.Response> {
     return this.cancelWebinar.execute({
       webinarId,
-      organizerId: request.organizerId,
+      organizerId: request.userId,
     });
   }
 }

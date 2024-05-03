@@ -7,13 +7,24 @@ export namespace WebinarSeeds {
     seats: 100,
     start: new Date('2024-05-12T10:00:00.000Z'),
     end: new Date('2024-05-12T11:00:00.000Z'),
-    organizer: new Organizer({ id: 'alice' }),
+    organizerId: 'alice',
   });
 
-  export const OrganizerAlice = new Organizer({ id: 'alice' });
-  export const OrganizerBob = new Organizer({ id: 'bob' });
+  export const existingWebinarWithOnlyOneSeat = new Webinar({
+    ...existingWebinar.props,
+    seats: 1,
+  });
 
-  export const existingParticipation = [
+  export const OrganizerAlice = new Organizer({
+    id: 'alice',
+    email: 'alice@gmail.com',
+  });
+  export const OrganizerBob = new Organizer({
+    id: 'bob',
+    email: 'bob@gmail.com',
+  });
+
+  export const existingParticipations = [
     new Participation({
       webinarId: existingWebinar.props.id,
       participantId: 'participant-1',
@@ -28,7 +39,7 @@ export namespace WebinarSeeds {
     }),
   ];
 
-  export const existingParticipant = [
+  export const existingParticipants = [
     new Participant({
       id: 'bob',
       email: 'bob@gmail.com',

@@ -1,8 +1,10 @@
 import { InMemoryUserRepository, UserRepository } from '@/domain/users';
 import {
+  InMemoryOrganizerRepository,
   InMemoryParticipantRepository,
   InMemoryParticipationRepository,
   InMemoryWebinarRepository,
+  OrganizerRepository,
   ParticipantRepository,
   ParticipationRepository,
   WebinarRepository,
@@ -27,12 +29,17 @@ import { Module } from '@nestjs/common';
       provide: ParticipantRepository,
       useClass: InMemoryParticipantRepository,
     },
+    {
+      provide: OrganizerRepository,
+      useClass: InMemoryOrganizerRepository,
+    },
   ],
   exports: [
     WebinarRepository,
     UserRepository,
     ParticipantRepository,
     ParticipationRepository,
+    OrganizerRepository,
   ],
 })
 export class RepositoriesModule {}

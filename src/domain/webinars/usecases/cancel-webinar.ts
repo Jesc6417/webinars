@@ -27,10 +27,9 @@ export class CancelWebinar {
     if (!webinar.isOrganizer(request.organizerId))
       throw new WebinarDeleteForbiddenException();
 
-    const participantsIds =
-      await this.participationRepository.findUsersIdsByWebinarId(
-        request.webinarId,
-      );
+    const participantsIds = await this.participationRepository.findUsersIds(
+      request.webinarId,
+    );
 
     const bcc = (await Promise.all(
       participantsIds
@@ -44,7 +43,9 @@ export class CancelWebinar {
       body: `The webinar "${webinar.props.title}" has been canceled.`,
     });
 
-    await this.participationRepository.deleteByWebinarId(request.webinarId);
+    await this.participationRepository.deleteAllParticipations(
+      request.webinarId,
+    );
     await this.webinarRepository.cancel(request.webinarId);
   }
 }

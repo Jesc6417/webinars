@@ -1,15 +1,14 @@
-import {
-  WebinarNotFoundException,
-  WebinarUpdateForbiddenException,
-  WebinarCannotEndBeforeStartsException,
-  WebinarTooManySeatsException,
-  WebinarCannotReduceNumberOfSeatsException,
-} from './../exceptions';
-import { Organizer } from './../entities';
 import { Executable } from './../../core';
+import { Organizer } from './../entities';
+import {
+  WebinarCannotReduceNumberOfSeatsException,
+  WebinarNotFoundException,
+  WebinarTooManySeatsException,
+  WebinarUpdateForbiddenException,
+} from './../exceptions';
 import { WebinarRepository } from './../ports';
 
-type Request = { webinarId: string; seats: number; organizer: Organizer };
+type Request = { webinarId: string; seats: number; organizerId: string };
 type Response = void;
 
 export class ChangeSeats implements Executable<Request, Response> {
@@ -20,7 +19,7 @@ export class ChangeSeats implements Executable<Request, Response> {
 
     if (!webinar) throw new WebinarNotFoundException();
 
-    if (!webinar.isOrganizer(request.organizer.props.id))
+    if (!webinar.isOrganizer(request.organizerId))
       throw new WebinarUpdateForbiddenException();
 
     if (webinar.hasLessSeats(request.seats))

@@ -71,7 +71,7 @@ export class ChangeDates implements Executable<Request, Response> {
   }
 
   private async getParticipantsIdsByWebinarId(webinarId: string) {
-    return this.participationRepository.findUsersIdsByWebinarId(webinarId);
+    return this.participationRepository.findUsersIds(webinarId);
   }
 
   private async getEmailsParticipants(

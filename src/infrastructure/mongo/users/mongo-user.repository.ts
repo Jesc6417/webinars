@@ -18,19 +18,27 @@ export class MongoUserRepository extends UserRepository {
 
     if (!user) return undefined;
 
+    return this.toDomain(user);
+  }
+  async create(user: User): Promise<void> {
+    const record = new this.model(this.toPersistence(user));
+
+    await record.save();
+  }
+
+  private toDomain(user: MongoUser.Document): User {
     return new User({
       id: user._id,
       email: user.email,
       token: user.token,
     });
   }
-  async create(user: User): Promise<void> {
-    const record = new this.model({
+
+  private toPersistence(user: User): MongoUser.SchemaClass {
+    return {
       _id: user.props.id,
       email: user.props.email,
       token: user.props.token,
-    });
-
-    await record.save();
+    };
   }
 }

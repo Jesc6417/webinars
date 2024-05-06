@@ -1,24 +1,25 @@
-import { UserSeeds } from './../tests/user.seeds';
+import { StubUserBuilder } from './../entities/user.builder';
 import { InMemoryUserRepository } from './../adapters';
 import { ValidateUserToken } from './validate-user-token';
 
 describe('Feature: Validate user token', () => {
   let userRepository: InMemoryUserRepository;
   let validateUserToken: ValidateUserToken;
+  const alice = new StubUserBuilder().build();
 
   beforeEach(async () => {
     userRepository = new InMemoryUserRepository();
     validateUserToken = new ValidateUserToken(userRepository);
 
-    await userRepository.create(UserSeeds.alice);
+    await userRepository.create(alice);
   });
 
   describe('Scenario: Happy path', () => {
     it('should return true if the token is valid', async () => {
-      const result = await validateUserToken.execute(UserSeeds.token);
+      const result = await validateUserToken.execute(alice.props.token);
 
       expect(result).toBeDefined();
-      expect(result!.props).toEqual(UserSeeds.alice.props);
+      expect(result!.props).toEqual(alice.props);
     });
   });
 

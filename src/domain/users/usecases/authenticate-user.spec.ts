@@ -1,16 +1,17 @@
-import { UserSeeds } from './../tests/user.seeds';
+import { StubUserBuilder } from './../entities/user.builder';
 import { InMemoryUserRepository } from '../adapters';
 import { AuthenticateUser } from './authenticate-user';
 
 describe('Feature: Authenticate user', () => {
   let userRepository: InMemoryUserRepository;
   let authenticateUser: AuthenticateUser;
+  const alice = new StubUserBuilder().build();
 
   beforeEach(async () => {
     userRepository = new InMemoryUserRepository();
     authenticateUser = new AuthenticateUser(userRepository);
 
-    await userRepository.create(UserSeeds.alice);
+    await userRepository.create(alice);
   });
 
   describe('Scenario: Happy path', () => {
@@ -23,7 +24,7 @@ describe('Feature: Authenticate user', () => {
       const result = await authenticateUser.execute(payload);
 
       expect(result).toEqual({
-        access_token: UserSeeds.token,
+        access_token: alice.props.token,
       });
     });
   });

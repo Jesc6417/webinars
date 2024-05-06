@@ -30,9 +30,10 @@ describe('Feature: Cancel reservation', () => {
       mailer,
     );
 
-    participationRepository.database.push(
-      WebinarSeeds.existingParticipations[0],
-    );
+    await participationRepository.create({
+      webinarId: WebinarSeeds.existingParticipations[0].props.webinarId,
+      participantId: WebinarSeeds.existingParticipations[0].props.participantId,
+    });
     participantRepository.database.push(...WebinarSeeds.existingParticipants);
     webinarRepository.database.push(WebinarSeeds.existingWebinar);
     organizerRepository.database.push(WebinarSeeds.OrganizerAlice);

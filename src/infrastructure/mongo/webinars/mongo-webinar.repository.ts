@@ -13,14 +13,7 @@ export class MongoWebinarRepository extends WebinarRepository {
   }
 
   async create(webinar: Webinar): Promise<void> {
-    const record = new this.model({
-      _id: webinar.props.id,
-      organizerId: webinar.props.organizerId,
-      title: webinar.props.title,
-      seats: webinar.props.seats,
-      start: webinar.props.start,
-      end: webinar.props.end,
-    });
+    const record = new this.model(this.toPersistence(webinar));
 
     await record.save();
   }
@@ -30,6 +23,18 @@ export class MongoWebinarRepository extends WebinarRepository {
 
     if (!webinar) return null;
 
+    return this.toDomain(webinar);
+  }
+
+  async update(webinar: Webinar): Promise<void> {
+    const difference = deepObjectDiff.diff(webinar.initialState, webinar.props);
+
+    if (!difference) return;
+
+    await this.model.updateOne({ _id: webinar.props.id }, difference);
+  }
+
+  private toDomain(webinar: MongoWebinar.Document): Webinar {
     return new Webinar({
       id: webinar._id,
       organizerId: webinar.organizerId,
@@ -40,11 +45,14 @@ export class MongoWebinarRepository extends WebinarRepository {
     });
   }
 
-  async update(webinar: Webinar): Promise<void> {
-    const difference = deepObjectDiff.diff(webinar.initialState, webinar.props);
-
-    if (!difference) return;
-
-    await this.model.updateOne({ _id: webinar.props.id }, difference);
+  private toPersistence(webinar: Webinar): MongoWebinar.SchemaClass {
+    return {
+      _id: webinar.props.id,
+      organizerId: webinar.props.organizerId,
+      title: webinar.props.title,
+      seats: webinar.props.seats,
+      start: webinar.props.start,
+      end: webinar.props.end,
+    };
   }
 }

@@ -1,5 +1,5 @@
-import { ParticipationRepository } from '@/domain/webinars';
-import { MongoParticipation } from '@/infrastructure/mongo/participations/mongo-participation';
+import { Participation, ParticipationRepository } from '@/domain/webinars';
+import { MongoParticipation } from './mongo-participation';
 import { Model } from 'mongoose';
 
 export class MongoParticipationRepository extends ParticipationRepository {
@@ -17,11 +17,7 @@ export class MongoParticipationRepository extends ParticipationRepository {
     participantId: string;
     webinarId: string;
   }): Promise<void> {
-    const record = new this.model({
-      _id: MongoParticipation.SchemaClass.generateId(request),
-      participantId: request.participantId,
-      webinarId: request.webinarId,
-    });
+    const record = new this.model(this.toPersistence(request));
 
     await record.save();
   }
@@ -59,4 +55,25 @@ export class MongoParticipationRepository extends ParticipationRepository {
 
     return exist !== null;
   };
+
+  private toDomain(participation: MongoParticipation.Document): Participation {
+    return new Participation({
+      participantId: participation.participantId,
+      webinarId: participation.webinarId,
+    });
+  }
+
+  private toPersistence(participation: {
+    participantId: string;
+    webinarId: string;
+  }): MongoParticipation.SchemaClass {
+    return {
+      _id: MongoParticipation.SchemaClass.generateId({
+        participantId: participation.participantId,
+        webinarId: participation.webinarId,
+      }),
+      participantId: participation.participantId,
+      webinarId: participation.webinarId,
+    };
+  }
 }

@@ -1,37 +1,54 @@
-import { InMemoryUserRepository, UserRepository } from '@/domain/users';
+import { UserRepository } from '@/domain/users';
 import {
   InMemoryOrganizerRepository,
-  InMemoryParticipantRepository,
-  InMemoryParticipationRepository,
-  InMemoryWebinarRepository,
   OrganizerRepository,
   ParticipantRepository,
   ParticipationRepository,
   WebinarRepository,
 } from '@/domain/webinars';
+import {
+  MongoModule,
+  MongoOrganizer,
+  MongoOrganizerRepository,
+  MongoParticipant,
+  MongoParticipantRepository,
+  MongoParticipation,
+  MongoParticipationRepository,
+  MongoUser,
+  MongoUserRepository,
+  MongoWebinar,
+  MongoWebinarRepository,
+} from '@/infrastructure/mongo';
 import { Module } from '@nestjs/common';
+import { getModelToken } from '@nestjs/mongoose';
 
 @Module({
+  imports: [MongoModule],
   providers: [
     {
       provide: WebinarRepository,
-      useClass: InMemoryWebinarRepository,
+      inject: [getModelToken(MongoWebinar.collection)],
+      useFactory: (model) => new MongoWebinarRepository(model),
     },
     {
       provide: UserRepository,
-      useClass: InMemoryUserRepository,
+      inject: [getModelToken(MongoUser.collection)],
+      useFactory: (model) => new MongoUserRepository(model),
     },
     {
       provide: ParticipationRepository,
-      useClass: InMemoryParticipationRepository,
+      inject: [getModelToken(MongoParticipation.collection)],
+      useFactory: (model) => new MongoParticipationRepository(model),
     },
     {
       provide: ParticipantRepository,
-      useClass: InMemoryParticipantRepository,
+      inject: [getModelToken(MongoParticipant.collection)],
+      useFactory: (model) => new MongoParticipantRepository(model),
     },
     {
       provide: OrganizerRepository,
-      useClass: InMemoryOrganizerRepository,
+      inject: [getModelToken(MongoOrganizer.collection)],
+      useFactory: (model) => new MongoOrganizerRepository(model),
     },
   ],
   exports: [

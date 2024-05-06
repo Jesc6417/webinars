@@ -1,10 +1,9 @@
-import { User } from './../entities/user';
+import { User } from './../entities';
 
 export abstract class UserRepository {
-  abstract authenticate(data: {
-    email: string;
-    password: string;
-  }): Promise<string | undefined>;
+  abstract authenticate(token: string): Promise<boolean>;
 
   abstract validate(token: string): Promise<User | undefined>;
+
+  abstract create(user: User): Promise<void>;
 }

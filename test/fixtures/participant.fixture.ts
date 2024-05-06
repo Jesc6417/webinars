@@ -1,22 +1,15 @@
-import {
-  InMemoryParticipantRepository,
-  Participant,
-  ParticipantRepository,
-  Participation,
-} from '@/domain/webinars';
+import { User, UserRepository } from '@/domain/users';
 import { AppTest } from '../app-test';
 import { Fixture } from './fixture';
 
-export class ParticipantFixture extends Fixture<Participant> {
-  constructor(public entity: Participant) {
+export class ParticipantFixture extends Fixture {
+  constructor(public entity: User) {
     super();
   }
 
-  async load(app: AppTest<Participation>): Promise<void> {
-    const participantRepository: InMemoryParticipantRepository = app.get(
-      ParticipantRepository,
-    );
+  async load(app: AppTest): Promise<void> {
+    const userRepository: UserRepository = app.get(UserRepository);
 
-    participantRepository.database.push(this.entity);
+    await userRepository.create(this.entity);
   }
 }

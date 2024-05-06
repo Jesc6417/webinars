@@ -10,7 +10,6 @@ export class ValidationPipe implements PipeTransform {
 
     if (result.success) return result.data;
 
-    console.error(result.error);
     throw new BadRequestException('Failed to validate');
   }
 }

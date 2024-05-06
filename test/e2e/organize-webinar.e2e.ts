@@ -1,11 +1,11 @@
-import { Webinar, WebinarRepository } from '@/domain/webinars';
+import { WebinarRepository } from '@/domain/webinars';
 import { addDays } from 'date-fns';
 import * as request from 'supertest';
 import { AppTest } from '../app-test';
 import { e2eUsers } from '../seeders/user.seeds';
 
 describe('Feature: Organizing a webinar', () => {
-  let app: AppTest<Webinar>;
+  let app: AppTest;
   let webinarRepository: WebinarRepository;
   const start = addDays(new Date(), 4);
   const end = addDays(new Date(), 5);
@@ -17,7 +17,7 @@ describe('Feature: Organizing a webinar', () => {
   };
 
   beforeEach(async () => {
-    app = new AppTest(Webinar);
+    app = new AppTest();
     await app.setup();
     await app.loadFixtures([e2eUsers.johnDoe]);
 
@@ -31,7 +31,7 @@ describe('Feature: Organizing a webinar', () => {
   describe('Scenario: Happy path', () => {
     it('should succeed', async () => {
       const result = await request(app.getHttpServer())
-        .post(app.path)
+        .post('/webinars')
         .set('Authorization', e2eUsers.johnDoe.createAuthorizationToken())
         .send({
           ...payload,
@@ -59,7 +59,7 @@ describe('Feature: Organizing a webinar', () => {
   describe('Scenario: the user is not authenticated', () => {
     it('should reject', async () => {
       const result = await request(app.getHttpServer())
-        .post(app.path)
+        .post('/webinars')
         .send({
           ...payload,
           end: end.toISOString(),

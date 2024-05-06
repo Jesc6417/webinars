@@ -1,30 +1,29 @@
-import { Participation } from '@/domain/webinars';
 import * as request from 'supertest';
 import { AppTest } from '../app-test';
 import {
+  e2eParticipants,
   e2eParticipations,
   e2eUsers,
   e2eWebinars,
-  e2eParticipants,
 } from '../seeders';
 
 describe('Feature: Reserving seat', () => {
-  let app: AppTest<Participation>;
+  let app: AppTest;
 
   beforeEach(async () => {
-    app = new AppTest(Participation);
+    app = new AppTest();
     await app.setup();
-    await app.loadFixtures([
-      e2eUsers.johnDoe,
-      e2eWebinars.sampleWebinar,
-      e2eParticipants.bob,
-    ]);
+    await app.loadFixtures([e2eUsers.johnDoe, e2eWebinars.sampleWebinar]);
+  });
+
+  afterEach(async () => {
+    await app.cleanup();
   });
 
   describe('Scenario: Happy path', () => {
     it('should succeed', async () => {
       const result = await request(app.getHttpServer())
-        .post(`${app.path}/${e2eWebinars.sampleWebinar.entity.props.id}`)
+        .post(`/participations/${e2eWebinars.sampleWebinar.entity.props.id}`)
         .set('Authorization', e2eUsers.johnDoe.createAuthorizationToken())
         .send({
           webinarId: e2eWebinars.sampleWebinar.entity.props.id,
@@ -43,7 +42,7 @@ describe('Feature: Reserving seat', () => {
   describe('Scenario: user is not authenticated', () => {
     it('should reject', async () => {
       const result = await request(app.getHttpServer())
-        .post(`${app.path}/${e2eWebinars.sampleWebinar.entity.props.id}`)
+        .post(`/participations/${e2eWebinars.sampleWebinar.entity.props.id}`)
         .send({
           webinarId: e2eWebinars.sampleWebinar.entity.props.id,
         });

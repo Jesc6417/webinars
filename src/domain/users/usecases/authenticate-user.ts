@@ -8,11 +8,13 @@ type Response = { access_token: string };
 export class AuthenticateUser implements Executable<Request, Response> {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute(request: Request) {
-    const token = await this.userRepository.authenticate(request);
+  async execute({ email, password }: Request) {
+    const access_token = Buffer.from(`${email}:${password}`).toString('base64');
 
-    if (!token) throw new UserNotFoundException();
+    const result = await this.userRepository.authenticate(access_token);
 
-    return { access_token: token };
+    if (!result) throw new UserNotFoundException();
+
+    return { access_token };
   }
 }

@@ -1,14 +1,13 @@
-import { Webinar } from '@/domain/webinars';
 import * as request from 'supertest';
 import { AppTest } from '../app-test';
 import { e2eUsers, e2eWebinars } from '../seeders';
 
 describe('Feature: Changing number of seats', () => {
-  let app: AppTest<Webinar>;
+  let app: AppTest;
   const seats = 150;
 
   beforeEach(async () => {
-    app = new AppTest(Webinar);
+    app = new AppTest();
     await app.setup();
     await app.loadFixtures([e2eUsers.johnDoe, e2eWebinars.sampleWebinar]);
   });
@@ -19,9 +18,10 @@ describe('Feature: Changing number of seats', () => {
 
   describe('Scenario: Happy path', () => {
     it('should succeed', async () => {
+      const url = `/webinars/${e2eWebinars.sampleWebinar.entity.props.id}/change-seats`;
       const result = await request(app.getHttpServer())
         .post(
-          `${app.path}/${e2eWebinars.sampleWebinar.entity.props.id}/change-seats`,
+          `/webinars/${e2eWebinars.sampleWebinar.entity.props.id}/change-seats`,
         )
         .set('Authorization', e2eUsers.johnDoe.createAuthorizationToken())
         .send({
@@ -40,7 +40,7 @@ describe('Feature: Changing number of seats', () => {
     it('should reject', async () => {
       const result = await request(app.getHttpServer())
         .post(
-          `${app.path}/${e2eWebinars.sampleWebinar.entity.props.id}/change-seats`,
+          `/webinars/${e2eWebinars.sampleWebinar.entity.props.id}/change-seats`,
         )
         .send({
           seats,

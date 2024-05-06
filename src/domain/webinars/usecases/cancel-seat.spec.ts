@@ -48,7 +48,7 @@ describe('Feature: Cancel reservation', () => {
     it('should cancel the reservation', async () => {
       await cancelParticipation.execute(payload);
 
-      const participation = await participationRepository.findUsersIds(
+      const participation = await participationRepository.findParticipantsIds(
         WebinarSeeds.existingParticipations[0].props.participantId,
       );
 
@@ -75,20 +75,6 @@ describe('Feature: Cancel reservation', () => {
         subject: 'Participant canceled reservation',
         body: 'The participant "participant-1@gmail.com" has canceled the reservation for the webinar "My first webinar".',
       });
-    });
-  });
-
-  describe('Scenario: Webinar does not exist', () => {
-    const payload = {
-      webinarId: 'id-2',
-      participantId: WebinarSeeds.existingParticipations[0].props.participantId,
-      organizerId: WebinarSeeds.existingWebinar.props.organizerId,
-    };
-
-    it('should fail', async () => {
-      expect(() => cancelParticipation.execute(payload)).rejects.toThrow(
-        'Webinar not found.',
-      );
     });
   });
 

@@ -6,24 +6,26 @@ import {
 import { AppTest } from '../app-test';
 import { Fixture } from './fixture';
 
-export class ParticipationFixture extends Fixture<Participation> {
+export class ParticipationFixture extends Fixture {
   constructor(public entity: Participation) {
     super();
   }
 
-  async load(app: AppTest<Participation>): Promise<void> {
+  async load(app: AppTest): Promise<void> {
     const participationRepository: InMemoryParticipationRepository = app.get(
       ParticipationRepository,
     );
 
-    participationRepository.database.push(this.entity);
+    await participationRepository.create(this.entity.props);
   }
 
-  async getById(app: AppTest<Participation>): Promise<string[]> {
+  async getById(app: AppTest): Promise<string[]> {
     const participationRepository = app.get<InMemoryParticipationRepository>(
       ParticipationRepository,
     );
 
-    return participationRepository.findUsersIds(this.entity.props.webinarId);
+    return participationRepository.findParticipantsIds(
+      this.entity.props.webinarId,
+    );
   }
 }

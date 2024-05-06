@@ -1,5 +1,4 @@
 import { Executable } from './../../core';
-import { Organizer } from './../entities';
 import {
   WebinarCannotReduceNumberOfSeatsException,
   WebinarNotFoundException,

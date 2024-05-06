@@ -1,9 +1,8 @@
+import { Executable, Mailer } from './../../core';
 import { Webinar } from './../entities';
-import { Mailer } from './../../core';
 import {
   ParticipantNotFoundException,
   ParticipationNotFoundException,
-  WebinarNotFoundException,
 } from './../exceptions';
 import {
   OrganizerRepository,
@@ -17,7 +16,7 @@ type Request = {
   participantId: string;
 };
 
-export class CancelSeat {
+export class CancelSeat implements Executable<Request, void> {
   constructor(
     private readonly participationRepository: ParticipationRepository,
     private readonly participantRepository: ParticipantRepository,
@@ -29,20 +28,18 @@ export class CancelSeat {
   async execute(request: Request) {
     const webinar = await this.webinarRepository.findById(request.webinarId);
 
-    if (!webinar) throw new WebinarNotFoundException();
-
     const emailParticipant = await this.participantRepository.getEmailById(
       request.participantId,
     );
 
     if (!emailParticipant) throw new ParticipantNotFoundException();
 
-    await this.assertParticipationExist(request);
+    await this.assertParticipantExist(request);
 
     await this.participationRepository.delete(request);
 
-    await this.sendEmailToParticipant(emailParticipant, webinar.props.title);
-    await this.sendEmailToOrganizer(webinar, emailParticipant);
+    await this.sendEmailToParticipant(emailParticipant, webinar!.props.title);
+    await this.sendEmailToOrganizer(webinar!, emailParticipant);
   }
 
   private async sendEmailToParticipant(to: string, title: string) {
@@ -68,7 +65,7 @@ export class CancelSeat {
     });
   }
 
-  private async assertParticipationExist(request: Request) {
+  private async assertParticipantExist(request: Request) {
     const participationExists =
       await this.participationRepository.isParticipationAlreadyExist(request);
 

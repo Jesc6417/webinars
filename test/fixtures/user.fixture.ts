@@ -1,15 +1,16 @@
-import { InMemoryUserRepository, User, UserRepository } from '@/domain/users';
+import { User, UserRepository } from '@/domain/users';
 import { AppTest } from '../app-test';
 import { Fixture } from './fixture';
 
-export class UserFixture extends Fixture<User> {
+export class UserFixture extends Fixture {
   constructor(public entity: User) {
     super();
   }
 
-  async load(app: AppTest<User>): Promise<void> {
-    const userRepository: InMemoryUserRepository = app.get(UserRepository);
-    userRepository.database.push(this.entity);
+  async load(app: AppTest): Promise<void> {
+    const userRepository: UserRepository = app.get(UserRepository);
+
+    await userRepository.create(this.entity);
   }
 
   createAuthorizationToken(): string {

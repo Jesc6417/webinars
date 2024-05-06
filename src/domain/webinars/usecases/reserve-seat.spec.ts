@@ -49,7 +49,7 @@ describe('Feature: Reserve seat', () => {
     it('should reserve seat', async () => {
       await reserveSeat.execute(payload);
 
-      const participation = await participationRepository.findUsersIds(
+      const participation = await participationRepository.findParticipantsIds(
         WebinarSeeds.existingWebinar.props.id,
       );
 

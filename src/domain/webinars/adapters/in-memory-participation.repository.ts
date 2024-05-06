@@ -6,7 +6,7 @@ type Request = { participantId: string; webinarId: string };
 export class InMemoryParticipationRepository extends ParticipationRepository {
   readonly database: Participation[] = [];
 
-  async findUsersIds(webinarId: string): Promise<string[]> {
+  async findParticipantsIds(webinarId: string): Promise<string[]> {
     return (await this.getParticipations(webinarId)).map(
       (participation) => participation.props.participantId,
     );

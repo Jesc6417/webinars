@@ -1,5 +1,5 @@
 import { AppTest } from '../app-test';
 
-export abstract class Fixture<T> {
-  abstract load(app: AppTest<T>): Promise<void>;
+export abstract class Fixture {
+  abstract load(app: AppTest): Promise<void>;
 }

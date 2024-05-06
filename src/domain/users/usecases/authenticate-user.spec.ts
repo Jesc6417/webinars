@@ -9,6 +9,8 @@ describe('Feature: Authenticate user', () => {
   beforeEach(async () => {
     userRepository = new InMemoryUserRepository();
     authenticateUser = new AuthenticateUser(userRepository);
+
+    await userRepository.create(UserSeeds.alice);
   });
 
   describe('Scenario: Happy path', () => {
@@ -18,8 +20,6 @@ describe('Feature: Authenticate user', () => {
     };
 
     it('should authenticate the user', async () => {
-      userRepository.database.push(UserSeeds.alice);
-
       const result = await authenticateUser.execute(payload);
 
       expect(result).toEqual({
@@ -30,7 +30,7 @@ describe('Feature: Authenticate user', () => {
 
   describe('Scenario: the user does not exist', () => {
     const payload = {
-      email: 'alice@gmail.com',
+      email: 'unknown-user@gmail.com',
       password: 'azerty',
     };
 
@@ -44,7 +44,7 @@ describe('Feature: Authenticate user', () => {
   describe('Scenario: the password is not valid', () => {
     const payload = {
       email: 'alice@gmail.com',
-      password: 'not-valid-password',
+      password: 'not-vwalid-password',
     };
 
     it('should fail', async () => {

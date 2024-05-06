@@ -1,21 +1,24 @@
-import { Webinar } from '@/domain/webinars';
 import { AppTest } from '../app-test';
 import * as request from 'supertest';
 import { e2eUsers, e2eWebinars } from '../seeders';
 
 describe('Feature: Cancelling webinar', () => {
-  let app: AppTest<Webinar>;
+  let app: AppTest;
 
   beforeEach(async () => {
-    app = new AppTest(Webinar);
+    app = new AppTest();
     await app.setup();
     await app.loadFixtures([e2eUsers.johnDoe, e2eWebinars.sampleWebinar]);
   });
 
+  afterEach(async () => {
+    await app.cleanup();
+  });
+
   describe('Scenario: Happy path', () => {
-    it('should succedd', async () => {
+    it('should succeed', async () => {
       const result = await request(app.getHttpServer())
-        .delete(`${app.path}/${e2eWebinars.sampleWebinar.entity.props.id}`)
+        .delete(`/webinars/${e2eWebinars.sampleWebinar.entity.props.id}`)
         .set('Authorization', e2eUsers.johnDoe.createAuthorizationToken())
         .send();
 
@@ -29,7 +32,7 @@ describe('Feature: Cancelling webinar', () => {
   describe('Scenario: the user is not authenticated', () => {
     it('should fail', async () => {
       const result = await request(app.getHttpServer())
-        .delete(`${app.path}/${e2eWebinars.sampleWebinar.entity.props.id}`)
+        .delete(`/webinars/${e2eWebinars.sampleWebinar.entity.props.id}`)
         .send();
 
       expect(result.status).toBe(403);

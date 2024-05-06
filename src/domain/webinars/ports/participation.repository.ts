@@ -1,5 +1,5 @@
 export abstract class ParticipationRepository {
-  abstract findUsersIds(webinarId: string): Promise<string[]>;
+  abstract findParticipantsIds(webinarId: string): Promise<string[]>;
 
   abstract deleteAllParticipations(webinarId: string): Promise<void>;
 

@@ -1,4 +1,4 @@
-import { Mailer } from './../../core';
+import { Executable, Mailer } from './../../core';
 import {
   WebinarDeleteForbiddenException,
   WebinarNotFoundException,
@@ -11,7 +11,7 @@ import {
 
 type Request = { webinarId: string; organizerId: string };
 
-export class CancelWebinar {
+export class CancelWebinar implements Executable<Request, void> {
   constructor(
     private readonly webinarRepository: WebinarRepository,
     private readonly participationRepository: ParticipationRepository,
@@ -27,9 +27,8 @@ export class CancelWebinar {
     if (!webinar.isOrganizer(request.organizerId))
       throw new WebinarDeleteForbiddenException();
 
-    const participantsIds = await this.participationRepository.findUsersIds(
-      request.webinarId,
-    );
+    const participantsIds =
+      await this.participationRepository.findParticipantsIds(request.webinarId);
 
     const bcc = (await Promise.all(
       participantsIds

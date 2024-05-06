@@ -1,5 +1,5 @@
 import { Webinar } from '@/domain/webinars';
-import { Mailer } from './../../core';
+import { Executable, Mailer } from './../../core';
 import {
   ParticipantAlreadyRegisteredException,
   ParticipantNotFoundException,
@@ -18,7 +18,7 @@ type Request = {
   participantId: string;
 };
 
-export class ReserveSeat {
+export class ReserveSeat implements Executable<Request, void> {
   constructor(
     private readonly participationRepository: ParticipationRepository,
     private readonly webinarRepository: WebinarRepository,

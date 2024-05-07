@@ -1,4 +1,4 @@
-import { DateProvider, IdGenerator, Mailer } from '@/domain/core';
+import { DateProvider, IdProvider, Mailer } from '@/domain/core';
 import {
   CancelWebinar,
   ChangeDates,
@@ -23,10 +23,10 @@ import { RepositoriesModule } from './repositories.module';
       provide: OrganizeWebinar,
       useFactory: (
         webinarRepository: WebinarRepository,
-        idGenerator: IdGenerator,
+        idGenerator: IdProvider,
         dateGenerator: DateProvider,
       ) => new OrganizeWebinar(webinarRepository, idGenerator, dateGenerator),
-      inject: [WebinarRepository, IdGenerator, DateProvider],
+      inject: [WebinarRepository, IdProvider, DateProvider],
     },
     {
       provide: ChangeSeats,

@@ -1,1 +1,1 @@
-export * from './id.generator';
+export * from './id.provider';

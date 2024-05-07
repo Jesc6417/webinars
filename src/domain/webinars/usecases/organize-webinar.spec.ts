@@ -2,22 +2,22 @@ import { Organizer } from './../entities';
 import { WebinarSeeds } from './../tests/webinar.seeds';
 import {
   DateProvider,
-  IdGenerator,
+  IdProvider,
   FixedDateProvider,
-  FixedIdGenerator,
+  FixedIdProvider,
 } from './../../core';
 import { InMemoryWebinarRepository } from './../adapters';
 import { OrganizeWebinar } from './organize-webinar';
 
 describe('Feature: Organizing a webinar', () => {
   let inMemoryWebinarRepository: InMemoryWebinarRepository;
-  let idGenerator: IdGenerator;
+  let idGenerator: IdProvider;
   let dateGenerator: DateProvider;
   let organizeWebinar: OrganizeWebinar;
 
   beforeEach(() => {
     inMemoryWebinarRepository = new InMemoryWebinarRepository();
-    idGenerator = new FixedIdGenerator();
+    idGenerator = new FixedIdProvider();
     dateGenerator = new FixedDateProvider();
 
     organizeWebinar = new OrganizeWebinar(

@@ -1,1 +1,1 @@
-export * from './fixed-id.generator';
+export * from './fixed-id.provider';

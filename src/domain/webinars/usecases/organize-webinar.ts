@@ -1,5 +1,5 @@
 import { WebinarRepository } from '../ports';
-import { DateProvider, Executable, IdGenerator } from './../../core';
+import { DateProvider, Executable, IdProvider } from './../../core';
 import { Webinar } from './../entities';
 import {
   WebinarCannotEndBeforeStartsException,
@@ -23,7 +23,7 @@ type Response = {
 export class OrganizeWebinar implements Executable<Request, Response> {
   constructor(
     private readonly webinarRepository: WebinarRepository,
-    private readonly idGenerator: IdGenerator,
+    private readonly idGenerator: IdProvider,
     private readonly dateGenerator: DateProvider,
   ) {}
 

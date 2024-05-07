@@ -10,7 +10,6 @@ export class AuthenticateUser implements Executable<Request, Response> {
 
   async execute({ email, password }: Request) {
     const access_token = Buffer.from(`${email}:${password}`).toString('base64');
-
     const result = await this.userRepository.authenticate(access_token);
 
     if (!result) throw new UserNotFoundException();

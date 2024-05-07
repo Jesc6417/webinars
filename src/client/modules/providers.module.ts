@@ -1,11 +1,11 @@
-import { DateProvider, IdGenerator } from '@/domain/core';
+import { DateProvider, IdProvider } from '@/domain/core';
 import { CurrentDateProvider, UuidProvider } from '@/infrastructure/providers';
 import { Module } from '@nestjs/common';
 
 @Module({
   providers: [
     {
-      provide: IdGenerator,
+      provide: IdProvider,
       useClass: UuidProvider,
     },
     {
@@ -13,6 +13,6 @@ import { Module } from '@nestjs/common';
       useClass: CurrentDateProvider,
     },
   ],
-  exports: [IdGenerator, DateProvider],
+  exports: [IdProvider, DateProvider],
 })
 export class ProvidersModule {}

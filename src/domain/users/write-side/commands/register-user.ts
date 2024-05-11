@@ -1,18 +1,27 @@
+import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
+import { IdProvider } from './../../../core';
 import { UserBuilder } from './../entities/user.builder';
-import { v4 } from 'uuid';
-import { Executable, IdProvider } from './../../core';
 import { UserRepository } from './../ports';
 
-type Request = { email: string; password: string };
+export class RegisterUserCommand implements ICommand {
+  constructor(
+    public readonly email: string,
+    public readonly password: string,
+  ) {}
+}
+
 type Response = { id: string };
 
-export class RegisterUser implements Executable<Request, Response> {
+@CommandHandler(RegisterUserCommand)
+export class RegisterUser
+  implements ICommandHandler<RegisterUserCommand, Response>
+{
   constructor(
     private readonly userRepository: UserRepository,
     private readonly idProvider: IdProvider,
   ) {}
 
-  async execute({ email, password }: Request) {
+  async execute({ email, password }: RegisterUserCommand) {
     const access_token = Buffer.from(`${email}:${password}`).toString('base64');
     const id = this.idProvider.generate();
     const user = new UserBuilder()

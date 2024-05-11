@@ -1,4 +1,4 @@
-import { Entity } from './../../core';
+import { Entity } from './../../../core';
 
 type UserProps = {
   id: string;

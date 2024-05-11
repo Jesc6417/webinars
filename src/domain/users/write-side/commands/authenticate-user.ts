@@ -1,14 +1,22 @@
+import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { UserNotFoundException } from './../exceptions';
-import { Executable } from './../../core';
 import { UserRepository } from './../ports';
 
-type Request = { email: string; password: string };
+export class AuthenticateUserCommand implements ICommand {
+  constructor(
+    public readonly email: string,
+    public readonly password: string,
+  ) {}
+}
 type Response = { access_token: string };
 
-export class AuthenticateUser implements Executable<Request, Response> {
+@CommandHandler(AuthenticateUserCommand)
+export class AuthenticateUser
+  implements ICommandHandler<AuthenticateUserCommand, Response>
+{
   constructor(private readonly userRepository: UserRepository) {}
 
-  async execute({ email, password }: Request) {
+  async execute({ email, password }: AuthenticateUserCommand) {
     const access_token = Buffer.from(`${email}:${password}`).toString('base64');
     const result = await this.userRepository.authenticate(access_token);
 

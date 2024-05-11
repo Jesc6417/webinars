@@ -1,7 +1,7 @@
-import { FixedIdProvider, IdProvider } from './../../core';
+import { RegisterUser, RegisterUserCommand } from './register-user';
+import { FixedIdProvider } from './../../../core';
 import { InMemoryUserRepository } from './../adapters';
 import { StubUserBuilder } from './../entities/user.builder';
-import { RegisterUser } from './../usecases/register-user';
 
 describe('Feature: Register user', () => {
   let userRepository: InMemoryUserRepository;
@@ -17,10 +17,9 @@ describe('Feature: Register user', () => {
 
   describe('Scenario: Happy path', () => {
     it('should create the user', async () => {
-      await registerUser.execute({
-        email: newUser.props.email,
-        password: 'azerty',
-      });
+      await registerUser.execute(
+        new RegisterUserCommand(newUser.props.email, 'azerty'),
+      );
 
       const user = userRepository.database[0];
 

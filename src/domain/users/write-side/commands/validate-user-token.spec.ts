@@ -16,7 +16,9 @@ describe('Feature: Validate user token', () => {
 
   describe('Scenario: Happy path', () => {
     it('should return true if the token is valid', async () => {
-      const result = await validateUserToken.execute(alice.props.token);
+      const result = await validateUserToken.execute({
+        token: alice.props.token,
+      });
 
       expect(result).toBeDefined();
       expect(result!.props).toEqual(alice.props);
@@ -27,7 +29,9 @@ describe('Feature: Validate user token', () => {
     it('should fail', async () => {
       expect(
         async () =>
-          await validateUserToken.execute('YWxpY2VAZ21haWwuY29tOmF6ZXJ0eQ='),
+          await validateUserToken.execute({
+            token: 'YWxpY2VAZ21haWwuY29tOmF6ZXJ0eQ=',
+          }),
       ).rejects.toThrow('Invalid token.');
     });
   });

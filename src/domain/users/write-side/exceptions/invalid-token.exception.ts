@@ -1,4 +1,4 @@
-import { DomainException } from './../../core/exceptions';
+import { DomainException } from './../../../core/exceptions';
 
 export class InvalidTokenException extends DomainException {
   constructor() {

@@ -5,7 +5,10 @@ import {
   InMemoryWebinarRepository,
 } from './../adapters';
 import { WebinarSeeds } from './../tests/webinar.seeds';
-import { CancelWebinar } from './cancel-webinar';
+import {
+  CancelWebinarCommand,
+  CancelWebinarCommandHandler,
+} from './cancel-webinar.command-handler';
 
 type Payload = {
   webinarId: string;
@@ -16,7 +19,7 @@ describe('Feature: Cancel webinar', () => {
   let webinarRepository: InMemoryWebinarRepository;
   let participationRepository: InMemoryParticipationRepository;
   let participantRepository: InMemoryParticipantRepository;
-  let cancelWebinar: CancelWebinar;
+  let cancelWebinar: CancelWebinarCommandHandler;
   let mailer: MailerFacade;
 
   async function shouldNotDeleteParticipations(payload: Payload) {
@@ -40,7 +43,7 @@ describe('Feature: Cancel webinar', () => {
     participationRepository = new InMemoryParticipationRepository();
     participantRepository = new InMemoryParticipantRepository();
     mailer = new MailerFacade();
-    cancelWebinar = new CancelWebinar(
+    cancelWebinar = new CancelWebinarCommandHandler(
       webinarRepository,
       participationRepository,
       participantRepository,
@@ -55,10 +58,10 @@ describe('Feature: Cancel webinar', () => {
   });
 
   describe('Scenario: Happy path', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-    };
+    const payload = new CancelWebinarCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      WebinarSeeds.OrganizerAlice.props.id,
+    );
 
     it('should cancel the webinar', async () => {
       await cancelWebinar.execute(payload);
@@ -87,10 +90,10 @@ describe('Feature: Cancel webinar', () => {
   });
 
   describe('Scenario: Webinar not found', () => {
-    const payload = {
-      webinarId: 'id-2',
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-    };
+    const payload = new CancelWebinarCommand(
+      'id-2',
+      WebinarSeeds.OrganizerAlice.props.id,
+    );
 
     it('should fail', () => {
       expect(() => cancelWebinar.execute(payload)).rejects.toThrow(
@@ -108,10 +111,10 @@ describe('Feature: Cancel webinar', () => {
   });
 
   describe('Scenario: Delete webinar from someone else', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      organizerId: WebinarSeeds.OrganizerBob.props.id,
-    };
+    const payload = new CancelWebinarCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      WebinarSeeds.OrganizerBob.props.id,
+    );
 
     it('should fail', () => {
       expect(() => cancelWebinar.execute(payload)).rejects.toThrow(

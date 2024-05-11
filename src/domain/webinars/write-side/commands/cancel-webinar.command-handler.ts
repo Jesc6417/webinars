@@ -1,3 +1,4 @@
+import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { Executable, Mailer } from './../../../core';
 import {
   WebinarDeleteForbiddenException,
@@ -9,9 +10,17 @@ import {
   WebinarRepository,
 } from './../ports';
 
-type Request = { webinarId: string; organizerId: string };
+export class CancelWebinarCommand implements ICommand {
+  constructor(
+    public readonly webinarId: string,
+    public readonly organizerId: string,
+  ) {}
+}
 
-export class CancelWebinar implements Executable<Request, void> {
+@CommandHandler(CancelWebinarCommand)
+export class CancelWebinarCommandHandler
+  implements ICommandHandler<CancelWebinarCommand, void>
+{
   constructor(
     private readonly webinarRepository: WebinarRepository,
     private readonly participationRepository: ParticipationRepository,
@@ -19,16 +28,16 @@ export class CancelWebinar implements Executable<Request, void> {
     private readonly mailer: Mailer,
   ) {}
 
-  async execute(request: Request): Promise<void> {
-    const webinar = await this.webinarRepository.findById(request.webinarId);
+  async execute(command: CancelWebinarCommand): Promise<void> {
+    const webinar = await this.webinarRepository.findById(command.webinarId);
 
     if (!webinar) throw new WebinarNotFoundException();
 
-    if (!webinar.isOrganizer(request.organizerId))
+    if (!webinar.isOrganizer(command.organizerId))
       throw new WebinarDeleteForbiddenException();
 
     const participantsIds =
-      await this.participationRepository.findParticipantsIds(request.webinarId);
+      await this.participationRepository.findParticipantsIds(command.webinarId);
 
     const bcc = (await Promise.all(
       participantsIds
@@ -43,8 +52,8 @@ export class CancelWebinar implements Executable<Request, void> {
     });
 
     await this.participationRepository.deleteAllParticipations(
-      request.webinarId,
+      command.webinarId,
     );
-    await this.webinarRepository.cancel(request.webinarId);
+    await this.webinarRepository.cancel(command.webinarId);
   }
 }

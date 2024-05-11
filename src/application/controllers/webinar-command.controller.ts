@@ -1,9 +1,8 @@
 import {
-  CancelWebinar,
+  CancelWebinarCommand,
   ChangeDates,
   ChangeSeats,
   OrganizeWebinarCommand,
-  OrganizeWebinarCommandHandler,
   WebinarAPI,
   WebinarByIdQueryStore,
 } from '@/domain/webinars';
@@ -27,7 +26,6 @@ export class WebinarCommandController {
   constructor(
     private readonly changeSeats: ChangeSeats,
     private readonly changeDates: ChangeDates,
-    private readonly cancelWebinar: CancelWebinar,
     private readonly webinarByIdQueryStore: WebinarByIdQueryStore,
     private readonly commandBus: CommandBus,
   ) {}
@@ -89,9 +87,8 @@ export class WebinarCommandController {
     @Param('id') webinarId: string,
     @Request() request: { userId: string },
   ): Promise<WebinarAPI.CancelWebinar.Response> {
-    return this.cancelWebinar.execute({
-      webinarId,
-      organizerId: request.userId,
-    });
+    return this.commandBus.execute(
+      new CancelWebinarCommand(webinarId, request.userId),
+    );
   }
 }

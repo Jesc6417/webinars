@@ -1,6 +1,6 @@
 import { DateProvider, IdProvider, Mailer } from '@/domain/core';
 import {
-  CancelWebinar,
+  CancelWebinarCommandHandler,
   CancelSeatCommandHandler,
   ChangeDates,
   ChangeSeats,
@@ -67,14 +67,14 @@ import { RepositoriesModule } from './repositories.module';
       ],
     },
     {
-      provide: CancelWebinar,
+      provide: CancelWebinarCommandHandler,
       useFactory: (
         webinarRepository: WebinarRepository,
         participationRepository: ParticipationRepository,
         participantRepository: ParticipantRepository,
         mailer: Mailer,
       ) =>
-        new CancelWebinar(
+        new CancelWebinarCommandHandler(
           webinarRepository,
           participationRepository,
           participantRepository,
@@ -161,7 +161,7 @@ import { RepositoriesModule } from './repositories.module';
     OrganizeWebinarCommandHandler,
     ChangeSeats,
     ChangeDates,
-    CancelWebinar,
+    CancelWebinarCommandHandler,
     ReserveSeatCommandHandler,
     CancelSeatCommandHandler,
     WebinarByIdQueryStore,

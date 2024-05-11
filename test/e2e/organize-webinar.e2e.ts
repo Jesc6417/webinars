@@ -1,4 +1,4 @@
-import { WebinarRepository } from '@/domain/webinars';
+import { WebinarQueryStore, WebinarRepository } from '@/domain/webinars';
 import { addDays } from 'date-fns';
 import * as request from 'supertest';
 import { AppTest } from '../app-test';
@@ -7,6 +7,7 @@ import { e2eUsers } from '../seeders/user.seeds';
 describe('Feature: Organizing a webinar', () => {
   let app: AppTest;
   let webinarRepository: WebinarRepository;
+  let webinarQueryStore: WebinarQueryStore;
   const start = addDays(new Date(), 4);
   const end = addDays(new Date(), 5);
   const payload = {
@@ -22,6 +23,7 @@ describe('Feature: Organizing a webinar', () => {
     await app.loadFixtures([e2eUsers.johnDoe]);
 
     webinarRepository = app.get(WebinarRepository);
+    webinarQueryStore = app.get(WebinarQueryStore);
   });
 
   afterEach(async () => {
@@ -52,6 +54,25 @@ describe('Feature: Organizing a webinar', () => {
         start,
         end,
         organizerId: 'id-user-1',
+      });
+
+      const storedWebinar = await webinarQueryStore.getWebinarById(
+        result.body.id,
+      );
+
+      expect(storedWebinar).toEqual({
+        id: result.body.id,
+        title: 'My first webinar',
+        start,
+        end,
+        organizer: {
+          id: 'id-user-1',
+          email: 'john-doe@gmail.com',
+        },
+        seats: {
+          reserved: 0,
+          available: 100,
+        },
       });
     });
   });

@@ -1,6 +1,7 @@
 import { MongoParticipation } from '@/infrastructure/mongo/participations/mongo-participation';
 import { MongoUser } from '@/infrastructure/mongo/users/mongo-user';
 import { MongoWebinar } from '@/infrastructure/mongo/webinars/mongo-webinar';
+import { CacheModule } from '@nestjs/cache-manager';
 import { INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { getModelToken } from '@nestjs/mongoose';

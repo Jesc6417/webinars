@@ -34,6 +34,7 @@ describe('Feature: Changing the dates', () => {
 
       const webinar = await e2eWebinars.sampleWebinar.getById(app);
 
+      expect(webinar!.props).toEqual(webinar!.initialState);
       expect(webinar!.props.start).toEqual(start);
       expect(webinar!.props.end).toEqual(end);
     });

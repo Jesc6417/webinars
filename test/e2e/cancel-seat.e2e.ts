@@ -15,7 +15,7 @@ describe('Feature: Canceling seat', () => {
     await app.setup();
     await app.loadFixtures([
       e2eUsers.johnDoe,
-      e2eParticipations.existingParticipation,
+      e2eParticipations.existingParticipations,
       e2eWebinars.sampleWebinar,
     ]);
   });
@@ -31,13 +31,13 @@ describe('Feature: Canceling seat', () => {
         .set('Authorization', e2eUsers.johnDoe.createAuthorizationToken())
         .send({
           webinarId:
-            e2eParticipations.existingParticipation.entity.props.webinarId,
+            e2eParticipations.existingParticipations.entity.props.webinarId,
         });
 
       expect(result.status).toBe(200);
 
       const participations =
-        await e2eParticipations.existingParticipation.getById(app);
+        await e2eParticipations.existingParticipations.getById(app);
 
       expect(participations.length).toBe(0);
     });
@@ -49,7 +49,7 @@ describe('Feature: Canceling seat', () => {
         .delete(`/participations/${e2eWebinars.sampleWebinar.entity.props.id}`)
         .send({
           webinarId:
-            e2eParticipations.existingParticipation.entity.props.webinarId,
+            e2eParticipations.existingParticipations.entity.props.webinarId,
         });
 
       expect(result.status).toBe(403);

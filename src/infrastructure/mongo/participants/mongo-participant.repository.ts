@@ -10,7 +10,7 @@ export class MongoParticipantRepository extends ParticipantRepository {
   }
 
   getEmailById = async (userId: string): Promise<string | undefined> => {
-    const user = await this.participantModel.findOne({ _id: userId });
+    const user = await this.participantModel.findById(userId);
 
     return user?.email;
   };

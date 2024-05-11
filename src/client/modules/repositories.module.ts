@@ -1,6 +1,5 @@
 import { UserRepository } from '@/domain/users';
 import {
-  InMemoryOrganizerRepository,
   OrganizerRepository,
   ParticipantRepository,
   ParticipationRepository,

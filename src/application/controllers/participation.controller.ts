@@ -1,6 +1,9 @@
 import { AuthenticationGuard } from '@/application/guards';
-import { ReserveSeat, WebinarAPI } from '@/domain/webinars';
-import { CancelSeat } from '@/domain/webinars/usecases/cancel-seat';
+import {
+  CancelSeatCommand,
+  ReserveSeatCommand,
+  WebinarAPI,
+} from '@/domain/webinars';
 import {
   Controller,
   Delete,
@@ -9,24 +12,21 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 
 @Controller('/participations')
 @UseGuards(AuthenticationGuard)
 export class ParticipationController {
-  constructor(
-    private readonly reserveSeat: ReserveSeat,
-    private readonly cancelSeat: CancelSeat,
-  ) {}
+  constructor(private readonly commandBus: CommandBus) {}
 
   @Post('/:id')
   async handleReserveSeat(
     @Param('id') webinarId: string,
     @Request() request: { userId: string },
   ): Promise<WebinarAPI.ReserveSeat.Response> {
-    return this.reserveSeat.execute({
-      webinarId,
-      participantId: request.userId,
-    });
+    return this.commandBus.execute(
+      new ReserveSeatCommand(webinarId, request.userId),
+    );
   }
 
   @Delete('/:id')
@@ -34,9 +34,8 @@ export class ParticipationController {
     @Param('id') webinarId: string,
     @Request() request: { userId: string },
   ): Promise<WebinarAPI.ReserveSeat.Response> {
-    return this.cancelSeat.execute({
-      webinarId,
-      participantId: request.userId,
-    });
+    return this.commandBus.execute(
+      new CancelSeatCommand(webinarId, request.userId),
+    );
   }
 }

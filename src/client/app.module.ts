@@ -1,17 +1,22 @@
 import {
   ParticipationController,
   UserController,
-  WebinarController,
+  WebinarCommandController,
+  WebinarQueryController,
 } from '@/application/controllers';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserProxyModule } from './modules/user-proxy.module';
-import { WebinarProxyModule } from './modules/webinar-proxy.module';
+import { WebinarCommandModule } from './modules/webinar-command.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { WebinarQueryModule } from './modules/webinar-query.module';
 
 @Module({
   imports: [
-    WebinarProxyModule,
+    WebinarCommandModule,
+    WebinarQueryModule,
     UserProxyModule,
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -20,9 +25,18 @@ import { WebinarProxyModule } from './modules/webinar-proxy.module';
         uri: configService.get('MONGODB_URI'),
       }),
     }),
+    CacheModule.register({
+      isGlobal: true,
+    }),
+    CqrsModule,
   ],
-  exports: [UserProxyModule, WebinarProxyModule],
-  controllers: [WebinarController, UserController, ParticipationController],
+  exports: [UserProxyModule, WebinarCommandModule],
+  controllers: [
+    WebinarCommandController,
+    WebinarQueryController,
+    UserController,
+    ParticipationController,
+  ],
   providers: [],
 })
 export class AppModule {}

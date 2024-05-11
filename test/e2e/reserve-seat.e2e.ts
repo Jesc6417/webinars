@@ -32,7 +32,7 @@ describe('Feature: Reserving seat', () => {
       expect(result.status).toBe(201);
 
       const participations =
-        await e2eParticipations.existingParticipation.getById(app);
+        await e2eParticipations.existingParticipations.getById(app);
 
       expect(participations.length).toBe(1);
       expect(participations[0]).toBe(e2eParticipants.bob.entity.props.id);

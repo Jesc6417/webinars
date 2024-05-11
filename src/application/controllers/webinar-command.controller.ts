@@ -1,6 +1,7 @@
 import {
   CancelWebinarCommand,
-  ChangeDates,
+  ChangeDatesCommand,
+  ChangeDatesCommandHandler,
   ChangeSeats,
   OrganizeWebinarCommand,
   WebinarAPI,
@@ -25,7 +26,7 @@ import { ValidationPipe } from './../pipes/validation.pipe';
 export class WebinarCommandController {
   constructor(
     private readonly changeSeats: ChangeSeats,
-    private readonly changeDates: ChangeDates,
+    private readonly changeDates: ChangeDatesCommandHandler,
     private readonly webinarByIdQueryStore: WebinarByIdQueryStore,
     private readonly commandBus: CommandBus,
   ) {}
@@ -74,12 +75,9 @@ export class WebinarCommandController {
     data: WebinarAPI.ChangeDates.Request,
     @Request() request: { userId: string },
   ): Promise<WebinarAPI.ChangeDates.Response> {
-    return this.changeDates.execute({
-      start: data.start,
-      end: data.end,
-      webinarId,
-      organizerId: request.userId,
-    });
+    return this.commandBus.execute(
+      new ChangeDatesCommand(webinarId, request.userId, data.start, data.end),
+    );
   }
 
   @Delete('/:id')

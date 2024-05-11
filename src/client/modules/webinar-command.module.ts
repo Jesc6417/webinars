@@ -2,7 +2,7 @@ import { DateProvider, IdProvider, Mailer } from '@/domain/core';
 import {
   CancelWebinarCommandHandler,
   CancelSeatCommandHandler,
-  ChangeDates,
+  ChangeDatesCommandHandler,
   ChangeSeats,
   OrganizerRepository,
   OrganizeWebinarCommandHandler,
@@ -43,7 +43,7 @@ import { RepositoriesModule } from './repositories.module';
       inject: [WebinarRepository],
     },
     {
-      provide: ChangeDates,
+      provide: ChangeDatesCommandHandler,
       useFactory: (
         webinarRepository: WebinarRepository,
         participationRepository: ParticipationRepository,
@@ -51,7 +51,7 @@ import { RepositoriesModule } from './repositories.module';
         dateGenerator: DateProvider,
         mailer: Mailer,
       ) =>
-        new ChangeDates(
+        new ChangeDatesCommandHandler(
           webinarRepository,
           participationRepository,
           participantRepository,
@@ -160,7 +160,7 @@ import { RepositoriesModule } from './repositories.module';
   exports: [
     OrganizeWebinarCommandHandler,
     ChangeSeats,
-    ChangeDates,
+    ChangeDatesCommandHandler,
     CancelWebinarCommandHandler,
     ReserveSeatCommandHandler,
     CancelSeatCommandHandler,

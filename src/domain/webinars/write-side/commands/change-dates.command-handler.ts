@@ -1,28 +1,34 @@
-import {
-  WebinarNotFoundException,
-  WebinarUpdateForbiddenException,
-  WebinarTooEarlyException,
-  WebinarCannotEndBeforeStartsException,
-} from '../exceptions';
-import { Webinar } from './../entities';
+import { CommandHandler, ICommand, ICommandHandler } from '@nestjs/cqrs';
 import { format } from 'date-fns';
 import {
-  ParticipationRepository,
+  WebinarCannotEndBeforeStartsException,
+  WebinarNotFoundException,
+  WebinarTooEarlyException,
+  WebinarUpdateForbiddenException,
+} from '../exceptions';
+import { DateProvider, Mailer } from './../../../core';
+import { Webinar } from './../entities';
+import {
   ParticipantRepository,
+  ParticipationRepository,
   WebinarRepository,
 } from './../ports';
-import { DateProvider, Executable, Mailer } from './../../../core';
 
-type Request = {
-  start?: Date;
-  end?: Date;
-  webinarId: string;
-  organizerId: string;
-};
+export class ChangeDatesCommand implements ICommand {
+  constructor(
+    public readonly webinarId: string,
+    public readonly organizerId: string,
+    public readonly start?: Date,
+    public readonly end?: Date,
+  ) {}
+}
 
 type Response = void;
 
-export class ChangeDates implements Executable<Request, Response> {
+@CommandHandler(ChangeDatesCommand)
+export class ChangeDatesCommandHandler
+  implements ICommandHandler<ChangeDatesCommand, Response>
+{
   constructor(
     private readonly webinarRepository: WebinarRepository,
     private readonly participationRepository: ParticipationRepository,
@@ -31,22 +37,22 @@ export class ChangeDates implements Executable<Request, Response> {
     private readonly mailer: Mailer,
   ) {}
 
-  async execute(request: Request) {
-    const webinar = await this.webinarRepository.findById(request.webinarId);
+  async execute(command: ChangeDatesCommand) {
+    const webinar = await this.webinarRepository.findById(command.webinarId);
 
     if (!webinar) throw new WebinarNotFoundException();
 
-    if (!webinar.isOrganizer(request.organizerId))
+    if (!webinar.isOrganizer(command.organizerId))
       throw new WebinarUpdateForbiddenException();
 
-    if (request.start) {
-      webinar.update({ start: request.start });
+    if (command.start) {
+      webinar.update({ start: command.start });
 
       if (webinar.isTooSoon(this.dateGenerator.now()))
         throw new WebinarTooEarlyException();
     }
 
-    if (request.end) webinar.update({ end: request.end });
+    if (command.end) webinar.update({ end: command.end });
 
     if (webinar.endsBeforeStart())
       throw new WebinarCannotEndBeforeStartsException();

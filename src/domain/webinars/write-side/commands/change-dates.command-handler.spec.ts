@@ -5,7 +5,10 @@ import {
   InMemoryParticipantRepository,
 } from './../adapters';
 import { WebinarSeeds } from './../tests/webinar.seeds';
-import { ChangeDates } from './change-dates';
+import {
+  ChangeDatesCommand,
+  ChangeDatesCommandHandler,
+} from './change-dates.command-handler';
 
 describe('Feature: Change webinars dates', () => {
   let webinarRepository: InMemoryWebinarRepository;
@@ -13,7 +16,7 @@ describe('Feature: Change webinars dates', () => {
   let participantRepository: InMemoryParticipantRepository;
   let dateProvider: DateProvider;
   let mailer: MailerFacade;
-  let useCase: ChangeDates;
+  let useCase: ChangeDatesCommandHandler;
 
   function shouldNotChangeDates() {
     const webinar = webinarRepository.findByIdSync('id-1');
@@ -27,7 +30,7 @@ describe('Feature: Change webinars dates', () => {
     participantRepository = new InMemoryParticipantRepository();
     mailer = new MailerFacade();
     dateProvider = new FixedDateProvider();
-    useCase = new ChangeDates(
+    useCase = new ChangeDatesCommandHandler(
       webinarRepository,
       participationRepository,
       participantRepository,
@@ -39,12 +42,12 @@ describe('Feature: Change webinars dates', () => {
   });
 
   describe('Scenario: Happy path', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      start: new Date('2024-05-12T10:00:00.000Z'),
-      end: new Date('2024-05-12T11:00:00.000Z'),
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-    };
+    const payload = new ChangeDatesCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      WebinarSeeds.OrganizerAlice.props.id,
+      new Date('2024-05-12T10:00:00.000Z'),
+      new Date('2024-05-12T11:00:00.000Z'),
+    );
 
     it('should change the dates of the webinar', async () => {
       await useCase.execute(payload);
@@ -80,8 +83,8 @@ describe('Feature: Change webinars dates', () => {
     it('should change the start of the webinar', async () => {
       await useCase.execute({
         webinarId: WebinarSeeds.existingWebinar.props.id,
-        start: new Date('2024-05-12T08:00:00.000Z'),
         organizerId: WebinarSeeds.OrganizerAlice.props.id,
+        start: new Date('2024-05-12T08:00:00.000Z'),
       });
 
       const webinar = await webinarRepository.findById('id-1');
@@ -94,8 +97,8 @@ describe('Feature: Change webinars dates', () => {
     it('should change the end of the webinar', async () => {
       await useCase.execute({
         webinarId: WebinarSeeds.existingWebinar.props.id,
-        end: new Date('2024-05-12T12:00:00.000Z'),
         organizerId: WebinarSeeds.OrganizerAlice.props.id,
+        end: new Date('2024-05-12T12:00:00.000Z'),
       });
 
       const webinar = await webinarRepository.findById('id-1');
@@ -107,12 +110,12 @@ describe('Feature: Change webinars dates', () => {
   });
 
   describe('Scenario: Webinar not found', () => {
-    const payload = {
-      webinarId: 'id-2',
-      start: new Date('2024-05-12T10:00:00.000Z'),
-      end: new Date('2024-05-12T11:00:00.000Z'),
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-    };
+    const payload = new ChangeDatesCommand(
+      'id-2',
+      WebinarSeeds.OrganizerAlice.props.id,
+      new Date('2024-05-12T10:00:00.000Z'),
+      new Date('2024-05-12T11:00:00.000Z'),
+    );
 
     it('should fail', () => {
       expect(() => useCase.execute(payload)).rejects.toThrow(
@@ -124,12 +127,12 @@ describe('Feature: Change webinars dates', () => {
   });
 
   describe('Scenario: Webinar can only be modified by the creator', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      start: new Date('2024-05-12T10:00:00.000Z'),
-      end: new Date('2024-05-12T11:00:00.000Z'),
-      organizerId: WebinarSeeds.OrganizerBob.props.id,
-    };
+    const payload = new ChangeDatesCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      WebinarSeeds.OrganizerBob.props.id,
+      new Date('2024-05-12T10:00:00.000Z'),
+      new Date('2024-05-12T11:00:00.000Z'),
+    );
 
     it('should fail', () => {
       expect(() => useCase.execute(payload)).rejects.toThrow(
@@ -141,12 +144,12 @@ describe('Feature: Change webinars dates', () => {
   });
 
   describe('Scenario: Webinar cannot happens too soon', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      start: new Date('2024-04-28T10:00:00.000Z'),
-      end: new Date('2024-04-28T12:00:00.000Z'),
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-    };
+    const payload = new ChangeDatesCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      WebinarSeeds.OrganizerAlice.props.id,
+      new Date('2024-04-28T10:00:00.000Z'),
+      new Date('2024-04-28T12:00:00.000Z'),
+    );
 
     it('should fail', () => {
       expect(() => useCase.execute(payload)).rejects.toThrow(
@@ -158,12 +161,12 @@ describe('Feature: Change webinars dates', () => {
   });
 
   describe('Scenario: Webinar cannot end before it start', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      start: new Date('2024-05-28T12:00:00.000Z'),
-      end: new Date('2024-05-28T10:00:00.000Z'),
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-    };
+    const payload = new ChangeDatesCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      WebinarSeeds.OrganizerAlice.props.id,
+      new Date('2024-05-28T12:00:00.000Z'),
+      new Date('2024-05-28T10:00:00.000Z'),
+    );
 
     it('should fail', () => {
       expect(() => useCase.execute(payload)).rejects.toThrow(

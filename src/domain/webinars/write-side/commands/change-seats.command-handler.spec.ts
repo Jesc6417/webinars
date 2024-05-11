@@ -1,10 +1,13 @@
 import { InMemoryWebinarRepository } from './../adapters';
 import { WebinarSeeds } from './../tests/webinar.seeds';
-import { ChangeSeats } from './change-seats';
+import {
+  ChangeSeatsCommand,
+  ChangeSeatsCommandHandler,
+} from './change-seats.command-handler';
 
 describe('Feature: Changing number of seats', () => {
   let inMemoryWebinarRepository: InMemoryWebinarRepository;
-  let changeSeats: ChangeSeats;
+  let changeSeats: ChangeSeatsCommandHandler;
 
   function shouldNotUpdateSeats() {
     const webinar = inMemoryWebinarRepository.findByIdSync(
@@ -15,17 +18,17 @@ describe('Feature: Changing number of seats', () => {
 
   beforeEach(() => {
     inMemoryWebinarRepository = new InMemoryWebinarRepository();
-    changeSeats = new ChangeSeats(inMemoryWebinarRepository);
+    changeSeats = new ChangeSeatsCommandHandler(inMemoryWebinarRepository);
 
     inMemoryWebinarRepository.database.push(WebinarSeeds.existingWebinar);
   });
 
   describe('Scenario: Happy path', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      seats: 200,
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-    };
+    const payload = new ChangeSeatsCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      200,
+      WebinarSeeds.OrganizerAlice.props.id,
+    );
 
     it('should updated the number of seats', async () => {
       await changeSeats.execute(payload);
@@ -38,11 +41,11 @@ describe('Feature: Changing number of seats', () => {
   });
 
   describe('Scenario: Webinar not found', () => {
-    const payload = {
-      seats: 200,
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-      webinarId: 'id-2',
-    };
+    const payload = new ChangeSeatsCommand(
+      'id-2',
+      200,
+      WebinarSeeds.OrganizerAlice.props.id,
+    );
 
     it('should fail', () => {
       expect(() => changeSeats.execute(payload)).rejects.toThrow(
@@ -54,11 +57,11 @@ describe('Feature: Changing number of seats', () => {
   });
 
   describe('Scenario: Webinar can only be modified by the creator', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      seats: 200,
-      organizerId: WebinarSeeds.OrganizerBob.props.id,
-    };
+    const payload = new ChangeSeatsCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      200,
+      WebinarSeeds.OrganizerBob.props.id,
+    );
 
     it('should fail', () => {
       expect(() => changeSeats.execute(payload)).rejects.toThrow(
@@ -70,11 +73,11 @@ describe('Feature: Changing number of seats', () => {
   });
 
   describe('Scenario: Seats cannot be reduced', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      seats: 50,
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-    };
+    const payload = new ChangeSeatsCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      50,
+      WebinarSeeds.OrganizerAlice.props.id,
+    );
 
     it('should fail', () => {
       expect(() => changeSeats.execute(payload)).rejects.toThrow(
@@ -86,11 +89,11 @@ describe('Feature: Changing number of seats', () => {
   });
 
   describe('Scenario: Seats cannot be updated to more than 1000 seats', () => {
-    const payload = {
-      webinarId: WebinarSeeds.existingWebinar.props.id,
-      organizerId: WebinarSeeds.OrganizerAlice.props.id,
-      seats: 1001,
-    };
+    const payload = new ChangeSeatsCommand(
+      WebinarSeeds.existingWebinar.props.id,
+      1001,
+      WebinarSeeds.OrganizerAlice.props.id,
+    );
 
     it('should fail', () => {
       expect(() => changeSeats.execute(payload)).rejects.toThrow(

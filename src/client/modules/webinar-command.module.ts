@@ -3,7 +3,7 @@ import {
   CancelWebinarCommandHandler,
   CancelSeatCommandHandler,
   ChangeDatesCommandHandler,
-  ChangeSeats,
+  ChangeSeatsCommandHandler,
   OrganizerRepository,
   OrganizeWebinarCommandHandler,
   ParticipantRepository,
@@ -37,9 +37,9 @@ import { RepositoriesModule } from './repositories.module';
       inject: [WebinarRepository, IdProvider, DateProvider],
     },
     {
-      provide: ChangeSeats,
+      provide: ChangeSeatsCommandHandler,
       useFactory: (webinarRepository: WebinarRepository) =>
-        new ChangeSeats(webinarRepository),
+        new ChangeSeatsCommandHandler(webinarRepository),
       inject: [WebinarRepository],
     },
     {
@@ -159,7 +159,7 @@ import { RepositoriesModule } from './repositories.module';
   ],
   exports: [
     OrganizeWebinarCommandHandler,
-    ChangeSeats,
+    ChangeSeatsCommandHandler,
     ChangeDatesCommandHandler,
     CancelWebinarCommandHandler,
     ReserveSeatCommandHandler,
